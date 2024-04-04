@@ -1,0 +1,84 @@
+---
+title: "XX PROJECT TITLE XX"
+author: "XX NAMES"
+date: "2024-01-01"
+date-format: iso
+format: pdf
+editor: source
+toc: true
+bibliography: report.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(mosaic)   
+library(tidyverse)
+library(mdsr)
+```
+
+## Introduction
+
+Your revised proposal should go here (replace XX with your responses).
+Please be sure to respond to the comments on shared on your initial proposal.
+
+- Title: 
+
+XX The working title of your project
+
+- Purpose: 
+
+> Describe the general topic/phenomenon you want to explore, as well some carefully considered questions that you hope to address. You should make an argument motivating your work. Why should someone be interested in what you are doing? What do you hope people will learn from your project?
+
+XX
+
+- Data: 
+
+> As best you can, describe where you will find your data, and what kind of data it is. Will you be working with spatial data in shapefiles? Will you be accessing an API to a live data source? Be as specific as you can, listing URLs and file formats if possible.
+
+XX
+
+- Variables: 
+
+> List, and briefly describe, each variable that you plan to incorporate. If you can, be specific about units, scale, etc.
+
+XX
+
+- End Product: 
+
+> Describe what you hope to deliver as a final product. Will it be a Shiny application that will be posted on the Internet (I anticipate that most groups will incorporate some form of dynamic visualization)? Will it be a GoogleMaps mash-up? Will it be an R package that provides an API to a live data source? Will it be an exploration of an interesting network dataset?
+
+XX
+
+- Do you have any questions for me?
+
+XX
+
+
+## Wrangling
+
+```{r}
+# if things go quickly, we might wrangle data from `data-raw` into `data` here.
+# these would be referred to as `../data-raw` and `../data`, respectively.
+# if not, the wrangling should happen in a `wrangle.qmd` file here (with associated pdf).
+```
+
+## Exploratory Analysis
+
+```{r}
+# we will ingest the analytic data from `data` here (as `../data`).
+```
+
+## Findings and Results
+
+## Conclusion
+
+We probably don't want to cite @broman-woo, but if we did this is how we would do it.
+Or we might talk about the importance of organizing data in spreadsheets [@broman-woo] and provide a different format for the citation.
+
+\newpage
+    
+## References
+
+::: {#refs}
+:::
