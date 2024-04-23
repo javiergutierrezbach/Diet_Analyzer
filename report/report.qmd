@@ -15,6 +15,7 @@ bibliography: report.bib
 library(mosaic)   
 library(tidyverse)
 library(mdsr)
+library(CanadianNutrient)
 ```
 
 ## Introduction
@@ -82,27 +83,10 @@ NutrientNames |>
   select(measure_description, conversion_factor_value, total_vitamin_b12_in_g)
 ```
 
-```{r}
-NutrientNames |> 
-  inner_join(NutrientAmounts, by = 'nutrient_id') |> 
-  filter(nutrient_name == 'PROTEIN', nutrient_value >= 20.00) |> 
-  inner_join(FoodNames, by = 'food_id') |> 
-  select(food_description, nutrient_value) |> 
-  rename("protein_in_g" = nutrient_value)
-```
 
 
-```{r}
-NutrientNames |> 
-  inner_join(NutrientAmounts, by = 'nutrient_id') |> 
-  filter(nutrient_name == 'FAT (TOTAL LIPIDS)') |> 
-  inner_join(FoodNames, by = 'food_id') |> 
-  inner_join(FoodGroup, by = 'food_group_id') |> 
-  rename("fat_in_g" = nutrient_value) |> 
-  group_by(food_group_name) |> 
-  summarise(num_of_foods = n(), avg_fat_per_food_in_g = mean(fat_in_g)) |> 
-  arrange(desc(avg_fat_per_food_in_g))
-```
+
+
 
 ## Exploratory Analysis
 

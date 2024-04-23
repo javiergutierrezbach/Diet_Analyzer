@@ -11,6 +11,8 @@ library(shiny)
 library(CanadianNutrient)
 library(DT)
 
+
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -36,6 +38,7 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
+    
     selectedData <- reactive({
       switch(input$DataSet,
            "Food Names" = FoodNames,
