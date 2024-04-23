@@ -1,7 +1,7 @@
 ---
 title: "Diet Analyzer"
 author: "Javier Gutierrez Back & George Chaidemenos "
-date: "2024-01-01"
+date: "2024-04-23"
 date-format: iso
 format: pdf
 editor: source
@@ -19,9 +19,7 @@ library(mdsr)
 
 ## Introduction
 
-- Title: 
-
-Diet Analyzer
+- Title: Diet Analyzer
 
 - Purpose: 
 
@@ -68,6 +66,42 @@ For the Shiny app, we will probably like to have an 'input your meal' section, w
 # if things go quickly, we might wrangle data from `data-raw` into `data` here.
 # these would be referred to as `../data-raw` and `../data`, respectively.
 # if not, the wrangling should happen in a `wrangle.qmd` file here (with associated pdf).
+```
+
+
+```{r}
+NutrientNames |> 
+  inner_join(NutrientAmounts, by = 'nutrient_id') |> 
+  rename("vitamin_b12_in_g" = nutrient_value) |> 
+  filter(nutrient_name == 'VITAMIN B-12') |> 
+  inner_join(FoodNames, by = 'food_id') |> 
+  filter(food_description == 'Egg, chicken, whole, cooked, scrambled or omelet') |> 
+  inner_join(ConversionFactor, by = 'food_id') |> 
+  inner_join(MeasureNames, by = 'measure_id') |> 
+  mutate(total_vitamin_b12_in_g = vitamin_b12_in_g * conversion_factor_value) |> 
+  select(measure_description, conversion_factor_value, total_vitamin_b12_in_g)
+```
+
+```{r}
+NutrientNames |> 
+  inner_join(NutrientAmounts, by = 'nutrient_id') |> 
+  filter(nutrient_name == 'PROTEIN', nutrient_value >= 20.00) |> 
+  inner_join(FoodNames, by = 'food_id') |> 
+  select(food_description, nutrient_value) |> 
+  rename("protein_in_g" = nutrient_value)
+```
+
+
+```{r}
+NutrientNames |> 
+  inner_join(NutrientAmounts, by = 'nutrient_id') |> 
+  filter(nutrient_name == 'FAT (TOTAL LIPIDS)') |> 
+  inner_join(FoodNames, by = 'food_id') |> 
+  inner_join(FoodGroup, by = 'food_group_id') |> 
+  rename("fat_in_g" = nutrient_value) |> 
+  group_by(food_group_name) |> 
+  summarise(num_of_foods = n(), avg_fat_per_food_in_g = mean(fat_in_g)) |> 
+  arrange(desc(avg_fat_per_food_in_g))
 ```
 
 ## Exploratory Analysis
