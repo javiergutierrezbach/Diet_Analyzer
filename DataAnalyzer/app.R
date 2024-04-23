@@ -8,42 +8,52 @@
 #
 
 library(shiny)
+library(CanadianNutrient)
+library(DT)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
+    titlePanel("Canadian Diet Analyser"),
+    fluidRow(
+      
+      radioButtons("DataSet", "Select a Data Set to Explore:",
+                   choices = c("Food Names", "Food Groups", "Food Sources", 
+                               "Measure Names", "Conversion Factor", 
+                               "Nutrient Names", "Nutrient Amounts", 
+                               "Nutrient Sources", "Yield Names", 
+                               "Yield Amounts", "Refuse Names", "Refuse Amounts"),
+                   selected = "Food Names")
+    ),
+    mainPanel(
+      DTOutput("myTable")
     )
+    # Sidebar with a slider input for number of bins 
+  
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
+  
+    selectedData <- reactive({
+      switch(input$DataSet,
+           "Food Names" = FoodNames,
+           "Food Groups" = FoodGroup,
+           "Food Sources" = FoodSources,
+           "Measure Names" = MeasureNames,
+           "Conversion Factor" = ConversionFactor,
+           "Nutrient Names" = NutrientNames,
+           "Nutrient Amounts" = NutrientAmounts,
+           "Nutrient Sources" = NutrientSources,
+           "Yield Names" = YieldNames,
+           "Yield Amounts" = YieldAmounts,
+           "Refuse Names" = RefuseNames,
+           "Refuse Amounts" = RefuseAmounts)
+   })
+  
+    output$myTable <- renderDT({
+      datatable(data = selectedData(), options = list(pageLength = 5))
     })
 }
 
