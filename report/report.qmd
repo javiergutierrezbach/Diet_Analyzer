@@ -69,8 +69,54 @@ For the Shiny app, we will probably like to have an 'input your meal' section, w
 # if not, the wrangling should happen in a `wrangle.qmd` file here (with associated pdf).
 ```
 
+```{r}
+
+# This meal would come from the search bar and the user's input. We are using a random meal as an example.
+Meal <- FoodNames |> 
+  filter(food_description == 'Cheese souffle' | food_description == 'Beef pot roast, with browned potatoes, peas and corn' | food_description == 'Chicken, broiler, light meat, fried')
+
+Meal
+```
 
 ```{r}
+
+# Wrangling to get the value of each nutrient for our meal and select the nutrients that we care about.
+Nutrients <- Meal |> 
+  inner_join(NutrientAmounts, by = 'food_id') |> 
+  group_by(nutrient_id) |> 
+  summarise("value" = sum(nutrient_value)) |> 
+  inner_join(NutrientNames, by = 'nutrient_id') |> 
+  select(nutrient_name, value) |> 
+  filter(nutrient_name == 'PROTEIN' | nutrient_name == 'FAT (TOTAL LIPIDS)' | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)' | nutrient_name == 'SUGARS, TOTAL') 
+
+Nutrients 
+```
+
+
+
+```{r}
+
+# Pie chart showing the proportions of those nutrient in our meal.
+
+labels = c("Protein", "Total Fat", "Carbohydrates", "Sugars")
+# Vitamins and minerals to be added later
+pie(Nutrients$value, labels, main = "Diet Nutrient Proportions")
+```
+
+
+```{r}
+# Count items in each food group, will find a better way to quantify this
+# Would look better with an actual meal rather than three items
+OurFoodGroups <- Meal |> 
+  inner_join(FoodGroup, by = 'food_group_id') |> 
+  group_by(food_group_name) |> 
+  summarise("Number of items" = n())
+
+OurFoodGroups
+```
+
+```{r}
+# To help us quantify nutrients based on how much of the food the user ate.
 NutrientNames |> 
   inner_join(NutrientAmounts, by = 'nutrient_id') |> 
   rename("vitamin_b12_in_g" = nutrient_value) |> 
@@ -82,9 +128,6 @@ NutrientNames |>
   mutate(total_vitamin_b12_in_g = vitamin_b12_in_g * conversion_factor_value) |> 
   select(measure_description, conversion_factor_value, total_vitamin_b12_in_g)
 ```
-
-
-
 
 
 
