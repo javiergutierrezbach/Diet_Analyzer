@@ -11,20 +11,7 @@ library(shiny)
 library(CanadianNutrient)
 library(DT)
 
-|> 
-  select(-food_group_name_f)
-|> 
-  select(-food_description_f)
-|> 
-  select(-food_source_description_f)
-|> 
-  select(-nutrient_name_f)
-|> 
-  select(-nutrient_sourc_description_f)
-|> 
-  select(-refuse_description_f)
-|> 
-  select(-yield_description_f)
+#
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(

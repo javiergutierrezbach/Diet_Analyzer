@@ -16,6 +16,7 @@ library(mosaic)
 library(tidyverse)
 library(mdsr)
 library(CanadianNutrient)
+library(stringr)
 ```
 
 ## Introduction
@@ -69,27 +70,40 @@ For the Shiny app, we will probably like to have an 'input your meal' section, w
 # if not, the wrangling should happen in a `wrangle.qmd` file here (with associated pdf).
 ```
 
-```{r}
 
+```{r}
 # This meal would come from the search bar and the user's input. We are using a random meal as an example.
 Meal <- FoodNames |> 
-  filter(food_description == 'Cheese souffle' | food_description == 'Beef pot roast, with browned potatoes, peas and corn' | food_description == 'Chicken, broiler, light meat, fried')
+  filter(food_description == 'Cheese souffle' | food_description == 'Beef pot roast, with browned potatoes, peas and corn' | food_description == 'Chicken, broiler, light meat, fried') |> 
+  inner_join(ConversionFactor, by = 'food_id') |> 
+  inner_join(MeasureNames, by = 'measure_id')  |> 
+  filter(measure_description == '250ml' | measure_description == '140g' | measure_description == '100ml chopped or diced')
 
-Meal
+Meal |> select(food_description, measure_description)
 ```
 
 ```{r}
 
 # Wrangling to get the value of each nutrient for our meal and select the nutrients that we care about.
-Nutrients <- Meal |> 
-  inner_join(NutrientAmounts, by = 'food_id') |> 
-  group_by(nutrient_id) |> 
-  summarise("value" = sum(nutrient_value)) |> 
-  inner_join(NutrientNames, by = 'nutrient_id') |> 
-  select(nutrient_name, value) |> 
-  filter(nutrient_name == 'PROTEIN' | nutrient_name == 'FAT (TOTAL LIPIDS)' | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)' | nutrient_name == 'SUGARS, TOTAL') 
 
-Nutrients 
+analyse_meal <- function(Meal) {
+  Nutrients <- Meal |> 
+  inner_join(NutrientAmounts, by = 'food_id') |> 
+  inner_join(NutrientNames, by = 'nutrient_id') |> 
+  filter(nutrient_name == 'PROTEIN' | nutrient_name == 'FAT (TOTAL LIPIDS)' | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)' | nutrient_name == 'SUGARS, TOTAL') |> 
+  mutate(new_value = nutrient_value * conversion_factor_value) |> 
+  group_by(nutrient_name) |>
+  summarise("value" = sum(new_value)) |>
+  select(nutrient_name, value) |> 
+  arrange(desc(value))
+ 
+  return (Nutrients)
+}
+
+
+Nutrients <- analyse_meal(Meal)
+
+Nutrients
 ```
 
 
