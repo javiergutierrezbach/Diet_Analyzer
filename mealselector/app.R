@@ -9,8 +9,7 @@
 
 library(shiny)
 library(CanadianNutrient)
-
-
+library(DT)
 
 
 # Define UI for application that draws a histogram
@@ -23,7 +22,9 @@ ui <- fluidPage(
                        choices = c("", unique(FoodNames$food_description))
                       ),
            actionButton("add_button", "Add to your meal"),
-           textOutput("food_list")
+           actionButton("remove_button", "Remove from your meal"),
+           DTOutput("my_meal"),
+           textOutput("mytest")
         )
     
 )
@@ -31,22 +32,31 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-  selected_foods <- reactiveValues(items = c())
-    
-       
-
+  selected_foods <- reactiveVal(c()) 
+  
   observeEvent(input$add_button, {
     if(input$dropdown != ""){
-      selected_foods$items <- c(selected_foods$items, input$dropdown)
+      current_foods <- selected_foods()
+      updated_foods <- c(current_foods, input$dropdown)
+      selected_foods(updated_foods) 
     }
   })
   
   
-  output$food_list <- renderText({
-    paste("List: ", paste(selected_foods$items, collapse = "\n"))
+  
+  output$my_meal <- renderDT({
+    my_dataframe <- data.frame(Value = selected_foods())
+    datatable(my_dataframe, options = list(paging = FALSE))
   })
   
   
+  observeEvent(input$remove_button, {
+    if(!is.null(input$my_meal_rows_selected)){
+      current_foods <- selected_foods()
+      updated_foods <- current_foods[-input$my_meal_rows_selected]
+      selected_foods(updated_foods) 
+    }
+  })
   
   
 }
