@@ -90,15 +90,17 @@ analyse_meal <- function(Meal) {
   Nutrients <- Meal |> 
   inner_join(NutrientAmounts, by = 'food_id') |> 
   inner_join(NutrientNames, by = 'nutrient_id') |> 
-  filter(nutrient_name == 'PROTEIN' | nutrient_name == 'FAT (TOTAL LIPIDS)' | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)' | nutrient_name == 'SUGARS, TOTAL') |> 
+  filter(nutrient_name == 'PROTEIN' | nutrient_name == 'FAT (TOTAL LIPIDS)' | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)') |> 
   mutate(new_value = nutrient_value * conversion_factor_value) |> 
   group_by(nutrient_name) |>
   summarise("value" = sum(new_value)) |>
-  select(nutrient_name, value) |> 
+  mutate(proportions = value * 100 / sum(value)) |> 
+  select(nutrient_name, value, proportions) |> 
   arrange(desc(value))
  
   return (Nutrients)
 }
+
 
 
 Nutrients <- analyse_meal(Meal)
@@ -121,26 +123,40 @@ pie(Nutrients$value, labels, main = "Diet Nutrient Proportions")
 ```{r}
 # Count items in each food group, will find a better way to quantify this
 # Would look better with an actual meal rather than three items
-OurFoodGroups <- Meal |> 
-  inner_join(FoodGroup, by = 'food_group_id') |> 
-  group_by(food_group_name) |> 
-  summarise("Number of items" = n())
+food_group_prop <- function(meal) {
+  OurFoodGroups <- meal |> 
+    inner_join(FoodGroup, by = 'food_group_id') |> 
+    group_by(food_group_name) |> 
+    summarise("Number of items" = n())
+  return (OurFoodGroups)
+}
+
+OurFoodGroups <- food_group_prop(Meal)
 
 OurFoodGroups
+
 ```
 
 ```{r}
 # To help us quantify nutrients based on how much of the food the user ate.
-NutrientNames |> 
-  inner_join(NutrientAmounts, by = 'nutrient_id') |> 
-  rename("vitamin_b12_in_g" = nutrient_value) |> 
-  filter(nutrient_name == 'VITAMIN B-12') |> 
-  inner_join(FoodNames, by = 'food_id') |> 
-  filter(food_description == 'Egg, chicken, whole, cooked, scrambled or omelet') |> 
-  inner_join(ConversionFactor, by = 'food_id') |> 
-  inner_join(MeasureNames, by = 'measure_id') |> 
-  mutate(total_vitamin_b12_in_g = vitamin_b12_in_g * conversion_factor_value) |> 
-  select(measure_description, conversion_factor_value, total_vitamin_b12_in_g)
+quantify_nutrient <- function(food, nutrient) {
+  myprops <- NutrientNames |> 
+    inner_join(NutrientAmounts, by = 'nutrient_id') |> 
+    rename("vitamin_b12_in_g" = nutrient_value) |> 
+    filter(nutrient_name == nutrient) |> 
+    inner_join(FoodNames, by = 'food_id') |> 
+    filter(food_description == food) |> 
+    inner_join(ConversionFactor, by = 'food_id') |> 
+    inner_join(MeasureNames, by = 'measure_id') |> 
+    mutate(total_vitamin_b12_in_g = vitamin_b12_in_g * conversion_factor_value) |> 
+    select(measure_description, conversion_factor_value, total_vitamin_b12_in_g)
+  return (myprops)
+}
+
+props <- quantify_nutrient('Egg, chicken, whole, cooked, scrambled or omelet', 'VITAMIN B-12')
+
+props
+
 ```
 
 ```{r}
