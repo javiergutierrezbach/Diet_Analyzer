@@ -187,7 +187,7 @@ carnivore <- tibble(
   proportions = c(30, 52.5, 17.5)
 )
 
-desertlover <- tibble(
+dessertlover <- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(7.5, 32.5, 60.0)
 )
@@ -195,11 +195,70 @@ desertlover <- tibble(
 athlete
 vegan
 normal
-desertlover
+dessertlover
 carnivore
 fastfoodlover
 ```
 
+```{r}
+
+sum_squared_errors <- function(props, baseline) {
+  props |> inner_join(baseline, by = 'nutrient_name') |> 
+    mutate(sq_error = (proportions.x - proportions.y)^2) |> 
+    summarise(sum_squared_errors = sum(sq_error))
+}
+
+
+
+```
+
+```{r}
+find_diet_fit <- function(props, athlete, normal, vegan, dessertlover, carnivore, fastfoodlover) {
+  
+  best_fit <- 'athlete'
+  athlete_err <- sum_squared_errors(props, athlete)
+ 
+  min <- athlete_err
+  
+  normal_err <- sum_squared_errors(props, normal)
+  if (normal_err < min) {
+    min <- normal_err
+    best_fit <- 'normal'
+  }
+  
+  vegan_err <- sum_squared_errors(props, vegan)
+  if (vegan_err < min) {
+    min <- vegan_err
+    best_fit <- 'vegan'
+  }
+  
+  dessertlover_err <- sum_squared_errors(props, dessertlover)
+  if (dessertlover_err < min) {
+    min <- dessertlover_err
+    best_fit <- 'dessertlover'
+  }
+  
+  carnivore_err <- sum_squared_errors(props, carnivore)
+  if (carnivore_err < min) {
+    min <- carnivore_err
+    best_fit <- 'carnivore'
+  }
+  
+  fastfoodlover_err <- sum_squared_errors(props, fastfoodlover)
+  if (fastfoodlover_err < min) {
+    min <- fastfoodlover_err
+    best_fit <- 'fastfoodlover'
+  }
+  
+  return (best_fit)
+  
+}
+
+best_fit <- find_diet_fit(Nutrients, athlete, normal, vegan, dessertlover, carnivore, fastfoodlover)
+
+best_fit
+```
+ 
 ## Exploratory Analysis
 
 ```{r}
