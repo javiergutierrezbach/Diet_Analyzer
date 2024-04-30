@@ -145,10 +145,11 @@ NutrientNames |>
 
 ```{r}
 #baseline diets
-athete <- tibble(
+athlete <- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(20.0, 30.0, 50.0)
 )
+
 
 normal <- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
@@ -174,6 +175,13 @@ desertlover <- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(7.5, 32.5, 60.0)
 )
+
+athlete
+vegan
+normal
+desertlover
+carnivore
+fastfoodlover
 ```
 
 ## Exploratory Analysis
