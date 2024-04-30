@@ -259,6 +259,8 @@ best_fit <- find_diet_fit(Nutrients, athlete, normal, vegan, dessertlover, carni
 best_fit
 ```
  
+ 
+ 
 ## Exploratory Analysis
 
 ```{r}
