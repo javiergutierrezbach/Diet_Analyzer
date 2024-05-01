@@ -6,7 +6,7 @@
 #
 #    https://shiny.posit.co/
 #
-
+library(dplyr)
 library(shiny)
 library(CanadianNutrient)
 library(DT)
