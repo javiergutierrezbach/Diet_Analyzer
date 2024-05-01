@@ -19,7 +19,6 @@ get_measurements <- function(item) {
     inner_join(ConversionFactor, by = 'food_id') |> 
     inner_join(MeasureNames, by = 'measure_id') |> 
     select(measure_description)
-  
   return (measurements)
 }
 
@@ -30,7 +29,7 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
            selectInput("dropdown", label = "What did you eat today?",
-                       choices = c("", unique(FoodNames$food_description))
+                       choices = c("-", unique(FoodNames$food_description))
                       ),
            selectInput("measure_list", label = "How much of it did you eat?",
                        choices = NULL),
@@ -53,11 +52,11 @@ server <- function(input, output, session) {
   
   observeEvent(input$dropdown, {
     measurements <- get_measurements(input$dropdown)
-    updateSelectInput(session, "measure_list", choices = c("", measurements), selected = "")
+    updateSelectInput(session, "measure_list", choices = c("-", measurements), selected = "-")
   })
   
   observeEvent(input$add_button, {
-    if(input$dropdown != "" & input$measure_list != ""){
+    if(input$dropdown != "-" & input$measure_list != "-"){
       
       current_foods <- selected_foods()
       updated_foods <- c(current_foods, input$dropdown)
