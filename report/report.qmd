@@ -261,13 +261,9 @@ best_fit
  
  
  
-## Exploratory Analysis
+## Application and Usage
 
-```{r}
-# we will ingest the analytic data from `data` here (as `../data`).
-```
-
-## Findings and Results
+In the end, Diet Analyzer is an application with great ease of use, interactivity and information. The Meal selector is the main widget that comes into play; it lets the user easily select the meal they had during the day by choosing one food item at a time. Once a food item is selected, (eg. Chicken, broiler, light meat and skin, roasted), you will be able to choose the quantity of it that you ate, from the ones available in the data set (eg. 1/2 bird, or 150ml chopped or diced).
 
 ## Conclusion
 
