@@ -1,4 +1,4 @@
-## STAT231 project repo (XX TITLE AND NAMES XX)
+## STAT231 project repo (Diet Analyser by Javier Gutierrez Bach and George Chaidemenos)
 
 This is the GitHub repo for the end of semester project:
 
