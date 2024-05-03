@@ -21,25 +21,19 @@ library(stringr)
 
 ## Introduction
 
-- Title: Diet Analyzer
+Title: Diet Analyzer
 
-- Purpose: 
-
-> Describe the general topic/phenomenon you want to explore, as well some carefully considered questions that you hope to address. You should make an argument motivating your work. Why should someone be interested in what you are doing? What do you hope people will learn from your project?
+Purpose: 
 
 We want to make it easy for people to visualise what they ate in a particular day in terms of their nutrients intake, and somehow quantify how 'balanced' their diet was. One question we would like to answer is what proportion of a person's meal was in each food group. Additionally, we would like people to be able to input to the program what they ate in the meal and have it say the amounts of each nutrient that they had. People would care about our project since it would be easier for them to find patterns in their eating habits and how to make it healthier perhaps or help them plan meals in advance.
 
-- Data: 
-
-> As best you can, describe where you will find your data, and what kind of data it is. Will you be working with spatial data in shapefiles? Will you be accessing an API to a live data source? Be as specific as you can, listing URLs and file formats if possible.
+Data: 
 
 We found our data set in the data is plural website. It is called Canadian Nutrient and it is a relational data base that provides information about food descriptions, food groups, nutrients, and a method for calculating the amounts of these nutrients for different quantities of the food. The data set contains 12 tables in a csv format which were already documented and loaded as an R package.
 
 We will not be working with spatial data in shapefiles, or using an API to a live data source. (https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-2015-download-files.html)
 
-- Variables: 
-
-> List, and briefly describe, each variable that you plan to incorporate. If you can, be specific about units, scale, etc.
+Variables: 
 
  - food: type of food
  - nutrient: name of the nutrient
@@ -49,20 +43,16 @@ We will not be working with spatial data in shapefiles, or using an API to a liv
  - conversion factor value: the factor by which me multiply the nutrient quantity per the measure used
  - food group: the general category the group belongs to
 
-- End Product: 
-
-> Describe what you hope to deliver as a final product. Will it be a Shiny application that will be posted on the Internet (I anticipate that most groups will incorporate some form of dynamic visualization)? Will it be a GoogleMaps mash-up? Will it be an R package that provides an API to a live data source? Will it be an exploration of an interesting network dataset?
+End Product: 
 
 We would hope to create a user interactive app through shiny where the user will input what foods they had eaten in a day and the app will provide the user with an analysis of their diet for that particular day. For example, create a pie chart or other visualisation that shows what proportions of different food groups they consumed, and a detailed analysis of how much fat, protein or other specific nutrients they consumed. We would like the user to be able to specify the specific foods and quantities as closely to the ones on the data set to provide accurate data with the conversion factors. For both of these questions, we would like to compare the user's numbers with certain baseline diets, like an athlete, a bodybuilder, a health nut, keto diet, vegan, maybe gluten free, fast food enthusiast. That is, showing the food group proportions of for the corresponding diets, do some sort of calculation to see which one the user is closest too, and maybe provide sample diets or possible improvements to make the diet more balanced or to satisfy your objective diet requirements.
 
 For the Shiny app, we will probably like to have an 'input your meal' section, where the user can type in their foods and match them (with regular expressions in the back end) to the foods in the database. From there, you will see two sections, one with the food group proportion graph, and one with your nutrient intake in descending order. We could still figure out whether we want the baseline diet comparison in the same sections, or if we want another section below those with possible changes and the comparisons.
 
 
-- Do you have any questions for me?
 
 
 
-## Wrangling
 
 ```{r}
 #| include: false
@@ -115,28 +105,8 @@ sum_squared_errors <- function(props, baseline) {
     mutate(sq_error = (proportions.x - proportions.y)^2) |> 
     summarise(sum_squared_errors = sum(sq_error))
 }
-
-
-
 ```
 
-```{r}
-# if things go quickly, we might wrangle data from `data-raw` into `data` here.
-# these would be referred to as `../data-raw` and `../data`, respectively.
-# if not, the wrangling should happen in a `wrangle.qmd` file here (with associated pdf).
-```
-
-
-```{r}
-# This meal would come from the search bar and the user's input. We are using a random meal as an example.
-Meal <- FoodNames |> 
-  filter(food_description == 'Cheese souffle' | food_description == 'Beef pot roast, with browned potatoes, peas and corn' | food_description == 'Chicken, broiler, light meat, fried') |> 
-  inner_join(ConversionFactor, by = 'food_id') |> 
-  inner_join(MeasureNames, by = 'measure_id')  |> 
-  filter(measure_description == '250ml' | measure_description == '140g' | measure_description == '100ml chopped or diced')
-
-Meal |> select(food_description, measure_description)
-```
 
 ```{r}
 #| include: false
@@ -164,42 +134,6 @@ analyse_meal <- function(Meal) {
 
 ```
 
-```{r}
-
-Nutrients <- analyse_meal(Meal)
-
-Nutrients
-
-```
-
-
-
-```{r}
-
-# Pie chart showing the proportions of those nutrient in our meal.
-
-labels = c("Protein", "Total Fat", "Carbohydrates", "Sugars")
-# Vitamins and minerals to be added later
-pie(Nutrients$value, labels, main = "Diet Nutrient Proportions")
-```
-
-
-```{r}
-# Count items in each food group, will find a better way to quantify this
-# Would look better with an actual meal rather than three items
-food_group_prop <- function(meal) {
-  OurFoodGroups <- meal |> 
-    inner_join(FoodGroup, by = 'food_group_id') |> 
-    group_by(food_group_name) |> 
-    summarise("Number of items" = n())
-  return (OurFoodGroups)
-}
-
-OurFoodGroups <- food_group_prop(Meal)
-
-OurFoodGroups
-
-```
 
 ```{r}
 #| include: false
@@ -221,14 +155,20 @@ quantify_nutrient <- function(food, nutrient) {
 
 
 ```
+
 ```{r}
+#| include: false
 
-props <- quantify_nutrient('Egg, chicken, whole, cooked, scrambled or omelet', 'VITAMIN B-12')
-
-props
-
+# Count items in each food group, will find a better way to quantify this
+# Would look better with an actual meal rather than three items
+food_group_prop <- function(meal) {
+  OurFoodGroups <- meal |> 
+    inner_join(FoodGroup, by = 'food_group_id') |> 
+    group_by(food_group_name) |> 
+    summarise("Number of items" = n())
+  return (OurFoodGroups)
+}
 ```
-
 
 ```{r}
 
@@ -278,13 +218,7 @@ find_diet_fit <- function(props, athlete, normal, vegan, dessertlover, carnivore
 
 ```
  
-```{r}
-best_fit <- find_diet_fit(Nutrients, athlete, normal, vegan, dessertlover, carnivore, fastfoodlover)
 
-best_fit
-
-```
- 
 ## Application and Usage
 
 In the end, Diet Analyzer is an application with great ease of use, interactivity and information. The Meal selector is the main widget that comes into play; it lets the user easily select the meal they had during the day by choosing one food item at a time. Once a food item is selected, (eg. Chicken, broiler, light meat and skin, roasted), you will be able to choose the quantity of it that you ate, from the ones available in the data set (eg. 1/2 bird, or 150ml chopped or diced). From here, you can add the food item to your meal and it displays as a table easy for the user to understand. If you make a mistake, you can easily remove it as well. 
@@ -294,6 +228,57 @@ Once your meal is finalized, you can press the 'Analyze your meal button', which
 ## Example
 
 Next up we present an example of how a user will use our application with a sample meal we chose and get informative outputs. The methods used in this section, as well as in our shiny app, can be seen in the Appendix section of this report.
+
+Let's suppose that our users meal consists of beef pot roast, with browned potatoes, peas and corn, fried chicken, and a cheese souffle as a dessert. In the shiny app the user will select the foods that his meal consisted of as well the specific quantities (volume) of each food and add them on a table like the one below.
+
+```{r}
+# This meal would come from the search bar and the user's input. We are using a random meal as an example.
+Meal <- FoodNames |> 
+  filter(food_description == 'Cheese souffle' | food_description == 'Beef pot roast, with browned potatoes, peas and corn' | food_description == 'Chicken, broiler, light meat, fried') |> 
+  inner_join(ConversionFactor, by = 'food_id') |> 
+  inner_join(MeasureNames, by = 'measure_id')  |> 
+  filter(measure_description == '250ml' | measure_description == '140g' | measure_description == '100ml chopped or diced')
+
+Meal |> select(food_description, measure_description)
+```
+Using the analyse meal function (explain in the appendix) we will calculate the macros of the users meal. Specifically, the function would print the amount of protein, fats, and carbohydrates in the meal as well as what proportion of the total meal each macro was. In this particular example, the meal included 58g of protein, 26g of fat, and 21g of carbohydrates. Regarding proportions, the meal would consist of 55% protein, almost 25% fats and 20% carbohydrates.
+
+```{r}
+
+Nutrients <- analyse_meal(Meal)
+
+Nutrients
+
+```
+In order to communicate our findings with the user interactively we are going to visualize the results from the analyse meal function with a pie chart. In more detail, we are going to showcase the meal nutrition proportions for the desired meal. Below you can see the pie chart DISPLAYING the macro proportions for our selected meal: the beef pot roast, with browned potatoes, peas and corn, fried chicken, and a cheese souffle
+
+```{r}
+
+# Pie chart showing the proportions of those nutrient in our meal.
+
+labels = c("Protein", "Total Fat", "Carbohydrates", "Sugars")
+# Vitamins and minerals to be added later
+pie(Nutrients$value, labels, main = "Diet Nutrient Proportions")
+```
+To provide additional information about the diversity of the user's diet we are also going to display the food group categories of the meal. This will be done by the food_group_prop function explained in the appendix. 
+In our example, the fried chicken is considered a poultry product while the beef pot roast, with browned potatoes, peas and corn and a cheese souffle are in the mixed dishes category.
+
+```{r}
+OurFoodGroups <- food_group_prop(Meal)
+
+OurFoodGroups
+
+```
+Concluding, we would compare the users meal to different baseline diets (for example athlete, vegan, normal etc.) and using the least squares optimization problem find the baseline diet that is more similar to the users meal. Since in this example the suggested meal was high in protein and a similar amount of carbohydrates and fat the user's meal would be closer to the carnivore diet. This would be particularly helpful for people with nutrition goals that aim to follow a specific baseline diet.
+
+```{r}
+best_fit <- find_diet_fit(Nutrients, athlete, normal, vegan, dessertlover, carnivore, fastfoodlover)
+
+best_fit
+
+```
+ 
+
 
 ## Evaluation
 
@@ -315,7 +300,6 @@ In essence, the data package was used exhaustively and we fulfilled the goals th
 ## Appendix
 
 ```{r}
-#| include: false
 
 #baseline diets
 athlete <- tibble(
@@ -458,4 +442,17 @@ analyse_meal <- function(Meal) {
 Nutrients <- analyse_meal(Meal)
 
 Nutrients
+```
+
+```{r}
+
+# Count items in each food group, will find a better way to quantify this
+# Would look better with an actual meal rather than three items
+food_group_prop <- function(meal) {
+  OurFoodGroups <- meal |> 
+    inner_join(FoodGroup, by = 'food_group_id') |> 
+    group_by(food_group_name) |> 
+    summarise("Number of items" = n())
+  return (OurFoodGroups)
+}
 ```
