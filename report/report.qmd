@@ -21,15 +21,14 @@ library(stringr)
 
 ## Introduction
 
-Title: Diet Analyzer
 
-Purpose: 
+Purpose 
 
-We want to make it easy for people to visualise what they ate in a particular day in terms of their nutrients intake, and somehow quantify how 'balanced' their diet was. One question we would like to answer is what proportion of a person's meal was in each food group. Additionally, we would like people to be able to input to the program what they ate in the meal and have it say the amounts of each nutrient that they had. People would care about our project since it would be easier for them to find patterns in their eating habits and how to make it healthier perhaps or help them plan meals in advance.
+The goal of this project is to make it easy for people to visualize what they eat in a particular day in terms of their nutrients intake, and also quantify how 'balanced' their diet is. One question we would like to answer is what proportion of a person's meal was in each food group. Additionally, we would like people to be able to input to the program what they ate in the meal and have it say the amounts of each nutrient that they had. People would care about our project since it would be easier for them to find patterns in their eating habits and how to make it healthier perhaps or help them plan meals in advance.
 
-Data: 
+Data
 
-We found our data set in the data is plural website. It is called Canadian Nutrient and it is a relational data base that provides information about food descriptions, food groups, nutrients, and a method for calculating the amounts of these nutrients for different quantities of the food. The data set contains 12 tables in a csv format which were already documented and loaded as an R package.
+We sourced our data set from the data is plural website. It is called Canadian Nutrient and it is a relational data base that provides information about food descriptions, food groups, nutrients, and a method for calculating the amounts of these nutrients for different quantities of the food. The data set contains 12 tables in a csv format which were already documented and loaded as an R package.
 
 We will not be working with spatial data in shapefiles, or using an API to a live data source. (https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-2015-download-files.html)
 
@@ -43,9 +42,9 @@ Variables:
  - conversion factor value: the factor by which me multiply the nutrient quantity per the measure used
  - food group: the general category the group belongs to
 
-End Product: 
+End Product
 
-We would hope to create a user interactive app through shiny where the user will input what foods they had eaten in a day and the app will provide the user with an analysis of their diet for that particular day. For example, create a pie chart or other visualisation that shows what proportions of different food groups they consumed, and a detailed analysis of how much fat, protein or other specific nutrients they consumed. We would like the user to be able to specify the specific foods and quantities as closely to the ones on the data set to provide accurate data with the conversion factors. For both of these questions, we would like to compare the user's numbers with certain baseline diets, like an athlete, a bodybuilder, a health nut, keto diet, vegan, maybe gluten free, fast food enthusiast. That is, showing the food group proportions of for the corresponding diets, do some sort of calculation to see which one the user is closest too, and maybe provide sample diets or possible improvements to make the diet more balanced or to satisfy your objective diet requirements.
+We would hope to create a user interactive app through shiny where the user will input what foods they had eaten in a day and the app will provide the user with an analysis of their diet for that particular day. For example, create a pie chart or other visualization that shows what proportions of different food groups they consumed, and a detailed analysis of how much fat, protein or other specific nutrients they consumed. We would like the user to be able to specify the specific foods and quantities as closely to the ones on the data set to provide accurate data with the conversion factors. For both of these questions, we would like to compare the user's numbers with certain baseline diets, like an athlete, a bodybuilder, a health nut, keto diet, vegan, maybe gluten free, fast food enthusiast. That is, showing the food group proportions of for the corresponding diets, do some sort of calculation to see which one the user is closest too, and maybe provide sample diets or possible improvements to make the diet more balanced or to satisfy your objective diet requirements.
 
 For the Shiny app, we will probably like to have an 'input your meal' section, where the user can type in their foods and match them (with regular expressions in the back end) to the foods in the database. From there, you will see two sections, one with the food group proportion graph, and one with your nutrient intake in descending order. We could still figure out whether we want the baseline diet comparison in the same sections, or if we want another section below those with possible changes and the comparisons.
 
@@ -89,12 +88,6 @@ dessertlover <- tibble(
   proportions = c(7.5, 32.5, 60.0)
 )
 
-athlete
-vegan
-normal
-dessertlover
-carnivore
-fastfoodlover
 ```
 
 ```{r}
@@ -171,10 +164,10 @@ food_group_prop <- function(meal) {
 ```
 
 ```{r}
-
 #| include: false
 
-find_diet_fit <- function(props, athlete, normal, vegan, dessertlover, carnivore, fastfoodlover) {
+find_diet_fit <- function(props, athlete, normal, vegan, 
+                          dessertlover, carnivore, fastfoodlover) {
   
   best_fit <- 'athlete'
   athlete_err <- sum_squared_errors(props, athlete)
@@ -229,53 +222,63 @@ Once your meal is finalized, you can press the 'Analyze your meal button', which
 
 Next up we present an example of how a user will use our application with a sample meal we chose and get informative outputs. The methods used in this section, as well as in our shiny app, can be seen in the Appendix section of this report.
 
-Let's suppose that our users meal consists of beef pot roast, with browned potatoes, peas and corn, fried chicken, and a cheese souffle as a dessert. In the shiny app the user will select the foods that his meal consisted of as well the specific quantities (volume) of each food and add them on a table like the one below.
+Let's suppose that our user's meal consists of beef pot roast with browned potatoes, peas and corn, fried chicken, and a cheese souffle as a dessert. In the shiny app the user will select the foods that his meal consisted of as well the specific quantities (volume) of each food through a search bar and add them on a table like the one below.
 
 ```{r}
-# This meal would come from the search bar and the user's input. We are using a random meal as an example.
+# This meal would come from the search bar and the user's input
 Meal <- FoodNames |> 
-  filter(food_description == 'Cheese souffle' | food_description == 'Beef pot roast, with browned potatoes, peas and corn' | food_description == 'Chicken, broiler, light meat, fried') |> 
+  filter(food_description == 'Cheese souffle' 
+  | food_description == 'Beef pot roast, with browned potatoes, peas and corn' 
+  | food_description == 'Chicken, broiler, light meat, fried') |> 
   inner_join(ConversionFactor, by = 'food_id') |> 
   inner_join(MeasureNames, by = 'measure_id')  |> 
-  filter(measure_description == '250ml' | measure_description == '140g' | measure_description == '100ml chopped or diced')
+  filter(measure_description == '250ml' | measure_description == '140g' 
+         | measure_description == '100ml chopped or diced')
 
-Meal <- Meal |> 
-  select(food_description, measure_description)
+Meal |> select(food_description, measure_description)
 ```
-Using the analyse meal function (explain in the appendix) we will calculate the macros of the users meal. Specifically, the function would print the amount of protein, fats, and carbohydrates in the meal as well as what proportion of the total meal each macro was. In this particular example, the meal included 58g of protein, 26g of fat, and 21g of carbohydrates. Regarding proportions, the meal would consist of 55% protein, almost 25% fats and 20% carbohydrates.
 
 
+Using the analyse meal function (explained in the appendix) we will calculate the macros of the user's meal. Specifically, the function would print the amount of protein, fats, and carbohydrates in the meal as well as what proportion of the total meal each macro nutrient was. In this particular example, the meal included 58g of protein, 26g of fat, and 21g of carbohydrates. Regarding proportions, the meal would consist of 55% protein, almost 25% fats and 20% carbohydrates.
 
 ```{r}
-
+#use analyse meal function to showcase the meals nutrients and their proportions
 Nutrients <- analyse_meal(Meal)
 
 Nutrients
 
 ```
-In order to communicate our findings with the user interactively we are going to visualize the results from the analyse meal function with a pie chart. In more detail, we are going to showcase the meal nutrition proportions for the desired meal. Below you can see the pie chart DISPLAYING the macro proportions for our selected meal: the beef pot roast, with browned potatoes, peas and corn, fried chicken, and a cheese souffle
+
+
+In order to communicate our findings with the user interactively we are going to visualize the results from the analyse meal function with a pie chart. In more detail, we are going to showcase the meal nutrition proportions for the desired meal. Below you can see the pie chart displaying the macro nutrients proportions for our selected meal: the beef pot roast with browned potatoes, peas and corn, the fried chicken, and the cheese souffle
 
 ```{r}
 
 # Pie chart showing the proportions of those nutrient in our meal.
 
 labels = c("Protein", "Total Fat", "Carbohydrates", "Sugars")
-# Vitamins and minerals to be added later
 pie(Nutrients$value, labels, main = "Diet Nutrient Proportions")
 ```
-To provide additional information about the diversity of the user's diet we are also going to display the food group categories of the meal. This will be done by the food_group_prop function explained in the appendix. 
+
+
+To provide additional information about the diversity of the user's diet we are also going to display the food group categories of the meal. This will be done by the food_group_prop function found in the appendix. 
 In our example, the fried chicken is considered a poultry product while the beef pot roast, with browned potatoes, peas and corn and a cheese souffle are in the mixed dishes category.
 
 ```{r}
+#find the food categories and their quantities
 OurFoodGroups <- food_group_prop(Meal)
 
 OurFoodGroups
 
 ```
-Concluding, we would compare the users meal to different baseline diets (for example athlete, vegan, normal etc.) and using the least squares optimization problem find the baseline diet that is more similar to the users meal. Since in this example the suggested meal was high in protein and a similar amount of carbohydrates and fat the user's meal would be closer to the carnivore diet. This would be particularly helpful for people with nutrition goals that aim to follow a specific baseline diet.
+
+
+Concluding, we would compare the user's meal to different baseline diets (for example athlete, vegan, normal etc.) and using the least squares optimization problem find the baseline diet that is more similar to the users meal. Since in this example the suggested meal was high in protein and a similar amount of carbohydrates and fat the user's meal would be closer to the carnivore diet. This would be particularly helpful for people with nutrition goals that aim to follow a specific baseline diet.
 
 ```{r}
-best_fit <- find_diet_fit(Nutrients, athlete, normal, vegan, dessertlover, carnivore, fastfoodlover)
+#find the baseline diet most similar to the inputed meal
+best_fit <- find_diet_fit(Nutrients, athlete, normal,
+            vegan, dessertlover, carnivore, fastfoodlover)
 
 best_fit
 
@@ -302,37 +305,44 @@ In essence, the data package was used exhaustively and we fulfilled the goals th
 
 ## Appendix
 
-```{r}
+1. Baseline diets: we created six different baseline diets based on the proportions of macro nutrients (protein, fat and carbohydrates) that each diet generally follows. Below we provide the code and tables with the proportions for each of the following diets: athlete, normal, vegan, fast food lover, dessert lover, and carnivore diet.
 
+```{r}
 #baseline diets
 athlete <- tibble(
-  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)",
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(20.0, 30.0, 50.0)
 )
 
 
 normal <- tibble(
-  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)",
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(15.0, 27.5, 57.5)
 )
 
 vegan <- tibble(
-  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(17.5, 27.5, 55.0)
 )
 
 fastfoodlover<- tibble(
-  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(15.0, 37.5, 47.5)
 )
 
 carnivore <- tibble(
-  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(30, 52.5, 17.5)
 )
 
 dessertlover <- tibble(
-  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(7.5, 32.5, 60.0)
 )
 
@@ -344,8 +354,12 @@ carnivore
 fastfoodlover
 ```
 
-```{r}
 
+
+2. Sum of Squared Errors Algorithm: aiming to compare the user's meal with the baseline diets we decided to use the famus optimization method of the least squares problem. Below you can see the function of the coded version of this equation (sum_squared_errors)
+
+```{r}
+#sum of squared errors function
 sum_squared_errors <- function(props, baseline) {
   props |> inner_join(baseline, by = 'nutrient_name') |> 
     mutate(sq_error = (proportions.x - proportions.y)^2) |> 
@@ -357,8 +371,14 @@ sum_squared_errors <- function(props, baseline) {
 ```
 
 
+
+3. Find diet fit: combining the functions from appendix 1 and 2, the find diet fit function below calculates the sum of the squared errors of the user's meal each baseline diet. The function then proceeds to print the baseline diet that had the smallest least squares solution, or in other words the baseline diet that matched to users meal.
+
 ```{r}
-find_diet_fit <- function(props, athlete, normal, vegan, dessertlover, carnivore, fastfoodlover) {
+#find the baseline diet that the user's meal belongs in
+find_diet_fit <- function(props, athlete, normal,
+                          vegan, dessertlover,
+                          carnivore, fastfoodlover) {
   
   best_fit <- 'athlete'
   athlete_err <- sum_squared_errors(props, athlete)
@@ -402,6 +422,8 @@ find_diet_fit <- function(props, athlete, normal, vegan, dessertlover, carnivore
 ```
 
 
+
+3. Quantify Nutrients: 
 ```{r}
 # To help us quantify nutrients based on how much of the food the user ate.
 quantify_nutrient <- function(food, nutrient) {
@@ -421,15 +443,19 @@ quantify_nutrient <- function(food, nutrient) {
 ```
 
 
-```{r}
 
-# Wrangling to get the value of each nutrient for our meal and select the nutrients that we care about.
+4. Analyse Meal: the function gets the user's meal as input and returns the quantities of the protein, fats, and carbohydrates of the meal as well as the proportions of these macro nutrients. See the code below for the data wrangling required for this function.
+
+```{r}
+# Get the value of macro nutrients of our meal 
 
 analyse_meal <- function(Meal) {
   Nutrients <- Meal |> 
   inner_join(NutrientAmounts, by = 'food_id') |> 
   inner_join(NutrientNames, by = 'nutrient_id') |> 
-  filter(nutrient_name == 'PROTEIN' | nutrient_name == 'FAT (TOTAL LIPIDS)' | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)') |> 
+  filter(nutrient_name == 'PROTEIN' 
+         | nutrient_name == 'FAT (TOTAL LIPIDS)' 
+         | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)') |> 
   mutate(new_value = nutrient_value * conversion_factor_value) |> 
   group_by(nutrient_name) |>
   summarise("value" = sum(new_value)) |>
@@ -442,10 +468,13 @@ analyse_meal <- function(Meal) {
 
 ```
 
+
+
+5. Food Group Proportions: the food_group_prop function takes the user's meal as input and returns the food group category of each food item selected as well as the quantity of each group category.
+
 ```{r}
 
-# Count items in each food group, will find a better way to quantify this
-# Would look better with an actual meal rather than three items
+# Count items in each food group
 food_group_prop <- function(meal) {
   OurFoodGroups <- meal |> 
     inner_join(FoodGroup, by = 'food_group_id') |> 
