@@ -239,9 +239,12 @@ Meal <- FoodNames |>
   inner_join(MeasureNames, by = 'measure_id')  |> 
   filter(measure_description == '250ml' | measure_description == '140g' | measure_description == '100ml chopped or diced')
 
-Meal |> select(food_description, measure_description)
+Meal <- Meal |> 
+  select(food_description, measure_description)
 ```
 Using the analyse meal function (explain in the appendix) we will calculate the macros of the users meal. Specifically, the function would print the amount of protein, fats, and carbohydrates in the meal as well as what proportion of the total meal each macro was. In this particular example, the meal included 58g of protein, 26g of fat, and 21g of carbohydrates. Regarding proportions, the meal would consist of 55% protein, almost 25% fats and 20% carbohydrates.
+
+
 
 ```{r}
 
@@ -437,11 +440,6 @@ analyse_meal <- function(Meal) {
   return (Nutrients)
 }
 
-
-
-Nutrients <- analyse_meal(Meal)
-
-Nutrients
 ```
 
 ```{r}

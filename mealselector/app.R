@@ -22,6 +22,24 @@ get_measurements <- function(item) {
   return (measurements)
 }
 
+analyse_meal <- function(Meal) {
+  Nutrients <- Meal |> 
+    inner_join(FoodNames, by = c('food_item' = 'food_description')) |> 
+    inner_join(NutrientAmounts, by = 'food_id') |> 
+    inner_join(NutrientNames, by = 'nutrient_id') |> 
+    filter(nutrient_name == 'PROTEIN' | nutrient_name == 'FAT (TOTAL LIPIDS)' | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)') |> 
+    inner_join(MeasureNames, by = c('measurement' = 'measure_description')) |> 
+    inner_join(ConversionFactor, by = c('measure_id', 'food_id')) |> 
+    mutate(new_value = nutrient_value * conversion_factor_value) |> 
+    group_by(nutrient_name) |>
+    summarise("value" = sum(new_value)) |>
+    mutate(proportions = value * 100 / sum(value)) |> 
+    select(nutrient_name, value, proportions) |> 
+    arrange(desc(value))
+  
+  return (Nutrients)
+}
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -36,7 +54,8 @@ ui <- fluidPage(
            actionButton("add_button", "Add to your meal"),
            actionButton("remove_button", "Remove from your meal"),
            DTOutput("my_meal"),
-           textOutput("mytest")
+           actionButton("analyzer", "Analyze your Meal!"),
+           DTOutput("my_nutrients")
         )
     
 )
@@ -48,7 +67,6 @@ server <- function(input, output, session) {
   selected_measures <- reactiveVal(c()) 
   
   measurements <- NULL
-  
   
   observeEvent(input$dropdown, {
     measurements <- get_measurements(input$dropdown)
@@ -88,7 +106,17 @@ server <- function(input, output, session) {
     }
   })
   
-  
+  observeEvent(input$analyzer, {
+    my_dataframe <- data.frame(food_item = selected_foods(), measurement = selected_measures())
+    if (nrow(my_dataframe) != 0) {
+      myNutrients <- analyse_meal(my_dataframe)
+      output$my_nutrients <- renderDT({
+        datatable(myNutrients, options = list(paging = FALSE))
+      })
+      
+    }
+    
+  })
 }
 
 # Run the application 
