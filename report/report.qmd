@@ -423,27 +423,6 @@ find_diet_fit <- function(props, athlete, normal,
 
 
 
-3. Quantify Nutrients: 
-```{r}
-# To help us quantify nutrients based on how much of the food the user ate.
-quantify_nutrient <- function(food, nutrient) {
-  myprops <- NutrientNames |> 
-    inner_join(NutrientAmounts, by = 'nutrient_id') |> 
-    rename("vitamin_b12_in_g" = nutrient_value) |> 
-    filter(nutrient_name == nutrient) |> 
-    inner_join(FoodNames, by = 'food_id') |> 
-    filter(food_description == food) |> 
-    inner_join(ConversionFactor, by = 'food_id') |> 
-    inner_join(MeasureNames, by = 'measure_id') |> 
-    mutate(total_vitamin_b12_in_g = vitamin_b12_in_g * conversion_factor_value) |> 
-    select(measure_description, conversion_factor_value, total_vitamin_b12_in_g)
-  return (myprops)
-}
-
-```
-
-
-
 4. Analyse Meal: the function gets the user's meal as input and returns the quantities of the protein, fats, and carbohydrates of the meal as well as the proportions of these macro nutrients. See the code below for the data wrangling required for this function.
 
 ```{r}
@@ -482,4 +461,23 @@ food_group_prop <- function(meal) {
     summarise("Number of items" = n())
   return (OurFoodGroups)
 }
+```
+
+6. Quantify Nutrients: this function is used to get the amount of a particular nutrient input by the user for a particular food item, also as input. Then the result is the amount of the nutrient that the food would contain for each possible measurement in the data set. This table will not necessarily be used in the app, or maybe a variation of it will be used, but it ws made by us for developing and exploration purposes.
+```{r}
+# To help us quantify nutrients based on how much of the food the user ate.
+quantify_nutrient <- function(food, nutrient) {
+  myprops <- NutrientNames |> 
+    inner_join(NutrientAmounts, by = 'nutrient_id') |> 
+    rename("vitamin_b12_in_g" = nutrient_value) |> 
+    filter(nutrient_name == nutrient) |> 
+    inner_join(FoodNames, by = 'food_id') |> 
+    filter(food_description == food) |> 
+    inner_join(ConversionFactor, by = 'food_id') |> 
+    inner_join(MeasureNames, by = 'measure_id') |> 
+    mutate(total_vitamin_b12_in_g = vitamin_b12_in_g * conversion_factor_value) |> 
+    select(measure_description, conversion_factor_value, total_vitamin_b12_in_g)
+  return (myprops)
+}
+
 ```
