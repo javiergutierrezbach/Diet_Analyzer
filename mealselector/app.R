@@ -10,8 +10,94 @@ library(dplyr)
 library(shiny)
 library(CanadianNutrient)
 library(DT)
+library(ggplot2)
 
 
+athlete <- tibble(
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)",
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  proportions = c(30, 20, 50.0)
+)
+
+
+normal <- tibble(
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)",
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  proportions = c(25, 25, 50)
+)
+
+healthnut <- tibble(
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  proportions = c(35, 10, 55)
+)
+
+fastfoodlover<- tibble(
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  proportions = c(20, 50, 30)
+)
+
+carnivore <- tibble(
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  proportions = c(60, 30, 10)
+)
+
+dessertlover <- tibble(
+  nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
+                    "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
+  proportions = c(7.5, 32.5, 60.0)
+)
+
+sum_squared_errors <- function(props, baseline) {
+  props |> inner_join(baseline, by = 'nutrient_name') |> 
+    mutate(sq_error = (proportions.x - proportions.y)^2) |> 
+    summarise(sum_squared_errors = sum(sq_error))
+}
+
+find_diet_fit <- function(props, athlete, normal,
+                          healthnut, dessertlover,
+                          carnivore, fastfoodlover) {
+  
+  best_fit <- 'athlete'
+  athlete_err <- sum_squared_errors(props, athlete)
+  
+  min <- athlete_err
+  
+  normal_err <- sum_squared_errors(props, normal)
+  if (normal_err < min) {
+    min <- normal_err
+    best_fit <- 'normal'
+  }
+  
+  healthnut_err <- sum_squared_errors(props, healthnut)
+  if (healthnut_err < min) {
+    min <- healthnut_err
+    best_fit <- 'healthnut'
+  }
+  
+  dessertlover_err <- sum_squared_errors(props, dessertlover)
+  if (dessertlover_err < min) {
+    min <- dessertlover_err
+    best_fit <- 'dessertlover'
+  }
+  
+  carnivore_err <- sum_squared_errors(props, carnivore)
+  if (carnivore_err < min) {
+    min <- carnivore_err
+    best_fit <- 'carnivore'
+  }
+  
+  fastfoodlover_err <- sum_squared_errors(props, fastfoodlover)
+  if (fastfoodlover_err < min) {
+    min <- fastfoodlover_err
+    best_fit <- 'fastfoodlover'
+  }
+  
+  return (best_fit)
+  
+}
 
 get_measurements <- function(item) {
   measurements <- FoodNames |> 
@@ -34,8 +120,7 @@ analyse_meal <- function(Meal) {
     group_by(nutrient_name) |>
     summarise("value" = sum(new_value)) |>
     mutate(proportions = value * 100 / sum(value)) |> 
-    select(nutrient_name, value, proportions) |> 
-    arrange(desc(value))
+    select(nutrient_name, value, proportions)
   
   return (Nutrients)
 }
@@ -55,7 +140,15 @@ ui <- fluidPage(
            actionButton("remove_button", "Remove from your meal"),
            DTOutput("my_meal"),
            actionButton("analyzer", "Analyze your Meal!"),
-           DTOutput("my_nutrients")
+           DTOutput("my_nutrients"),
+           plotOutput("nutrientPie"),
+           textOutput("yourFit"),
+           selectInput("baselines", label = "Choose a Baseline Diet",
+                       choices = c("-", "athlete", "normal", "healthnut", "fastfoodlover", "carnivore", "dessertlover")
+           ),
+           actionButton("compare", "Compare your Meal!"),
+           plotOutput("bar")
+           
         )
     
 )
@@ -114,9 +207,61 @@ server <- function(input, output, session) {
         datatable(myNutrients, options = list(paging = FALSE))
       })
       
+      output$nutrientPie <- renderPlot({
+        pie(myNutrients$proportions, labels = myNutrients$nutrient_name, 
+            col = c("wheat3", "orange", "limegreen"), main = "Your Nutrient Proportions")
+      })
+    output$yourFit <- renderText(
+      paste("Your meal is most comparable to the following diet: ",  find_diet_fit(myNutrients, athlete, normal,
+                                                                                   healthnut, dessertlover,
+                                                                                   carnivore, fastfoodlover))
+    )
+      
     }
     
   })
+  
+  observeEvent(input$compare, {
+    if(input$baselines != "-"){
+      
+      my_frame <- NULL
+      
+      switch(
+        input$baselines,
+        "athlete" = my_frame <- athlete,
+        "normal" = my_frame <- normal,
+        "healthnut" = my_frame <- healthnut,
+        "fastfoodlover" = my_frame <- fastfoodlover,
+        "carnivore" = my_frame <- carnivore,
+        "dessertlover" = my_frame <- dessertlover
+      )
+      
+      my_frame <- my_frame |> rename('baseline' = proportions)
+      my_meal <- myNutrients |> rename('meal' = proportions)
+      
+      bardata <- my_frame |> 
+        inner_join(my_meal, by = "nutrient_name") |> 
+        pivot_longer(cols = c(baseline, meal),
+                     names_to = "frame",
+                     values_to = "proportions")
+      
+      output$bar <- renderPlot({
+        ggplot(bardata, aes(x = nutrient_name, y = proportions, fill=frame)) +
+          geom_bar(stat = "identity", position=position_dodge()
+                   ) +
+          scale_fill_manual(values = c("springgreen3", "royalblue2")) +
+          labs(
+            x = 'Nutrient Name',
+            y = 'Proportions',
+            fill = '',
+            title = "Your Meal's Nutrient Proportions Compared to a Baseline Diet"
+          )
+      })
+    }
+    
+  })
+  
+  
 }
 
 # Run the application 

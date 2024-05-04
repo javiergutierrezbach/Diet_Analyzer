@@ -68,7 +68,7 @@ normal <- tibble(
   proportions = c(15.0, 27.5, 57.5)
 )
 
-vegan <- tibble(
+healthnut <- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
   proportions = c(17.5, 27.5, 55.0)
 )
@@ -109,9 +109,12 @@ sum_squared_errors <- function(props, baseline) {
 
 analyse_meal <- function(Meal) {
   Nutrients <- Meal |> 
+  inner_join(FoodNames, by = 'food_description') |> 
   inner_join(NutrientAmounts, by = 'food_id') |> 
   inner_join(NutrientNames, by = 'nutrient_id') |> 
   filter(nutrient_name == 'PROTEIN' | nutrient_name == 'FAT (TOTAL LIPIDS)' | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)') |> 
+  inner_join(MeasureNames, by = 'measure_description') |> 
+  inner_join(ConversionFactor, by = c('measure_id', 'food_id')) |> 
   mutate(new_value = nutrient_value * conversion_factor_value) |> 
   group_by(nutrient_name) |>
   summarise("value" = sum(new_value)) |>
@@ -166,7 +169,7 @@ food_group_prop <- function(meal) {
 ```{r}
 #| include: false
 
-find_diet_fit <- function(props, athlete, normal, vegan, 
+find_diet_fit <- function(props, athlete, normal, healthnut, 
                           dessertlover, carnivore, fastfoodlover) {
   
   best_fit <- 'athlete'
@@ -180,10 +183,10 @@ find_diet_fit <- function(props, athlete, normal, vegan,
     best_fit <- 'normal'
   }
   
-  vegan_err <- sum_squared_errors(props, vegan)
-  if (vegan_err < min) {
-    min <- vegan_err
-    best_fit <- 'vegan'
+  healthnut_err <- sum_squared_errors(props, healthnut)
+  if (healthnut_err < min) {
+    min <- healthnut_err
+    best_fit <- 'healthnut'
   }
   
   dessertlover_err <- sum_squared_errors(props, dessertlover)
@@ -233,9 +236,10 @@ Meal <- FoodNames |>
   inner_join(ConversionFactor, by = 'food_id') |> 
   inner_join(MeasureNames, by = 'measure_id')  |> 
   filter(measure_description == '250ml' | measure_description == '140g' 
-         | measure_description == '100ml chopped or diced')
+         | measure_description == '100ml chopped or diced')|> 
+  select(food_description, measure_description)
 
-Meal |> select(food_description, measure_description)
+Meal 
 ```
 
 
@@ -256,7 +260,7 @@ In order to communicate our findings with the user interactively we are going to
 
 # Pie chart showing the proportions of those nutrient in our meal.
 
-labels = c("Protein", "Total Fat", "Carbohydrates", "Sugars")
+labels = c("Protein", "Total Fat", "Carbohydrates")
 pie(Nutrients$value, labels, main = "Diet Nutrient Proportions")
 ```
 
@@ -276,9 +280,9 @@ OurFoodGroups
 Concluding, we would compare the user's meal to different baseline diets (for example athlete, vegan, normal etc.) and using the least squares optimization problem find the baseline diet that is more similar to the users meal. Since in this example the suggested meal was high in protein and a similar amount of carbohydrates and fat the user's meal would be closer to the carnivore diet. This would be particularly helpful for people with nutrition goals that aim to follow a specific baseline diet.
 
 ```{r}
-#find the baseline diet most similar to the inputed meal
+#find the baseline diet most similar to the input meal
 best_fit <- find_diet_fit(Nutrients, athlete, normal,
-            vegan, dessertlover, carnivore, fastfoodlover)
+            healthnut, dessertlover, carnivore, fastfoodlover)
 
 best_fit
 
@@ -312,32 +316,32 @@ In essence, the data package was used exhaustively and we fulfilled the goals th
 athlete <- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)",
                     "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
-  proportions = c(20.0, 30.0, 50.0)
+  proportions = c(30, 20, 50.0)
 )
 
 
 normal <- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)",
                     "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
-  proportions = c(15.0, 27.5, 57.5)
+  proportions = c(25, 25, 50)
 )
 
-vegan <- tibble(
+healthnut <- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
                     "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
-  proportions = c(17.5, 27.5, 55.0)
+  proportions = c(35, 10, 55)
 )
 
 fastfoodlover<- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
                     "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
-  proportions = c(15.0, 37.5, 47.5)
+  proportions = c(20, 50, 30)
 )
 
 carnivore <- tibble(
   nutrient_name = c("PROTEIN", "FAT (TOTAL LIPIDS)", 
                     "CARBOHYDRATE, TOTAL (BY DIFFERENCE)"),
-  proportions = c(30, 52.5, 17.5)
+  proportions = c(60, 30, 10)
 )
 
 dessertlover <- tibble(
@@ -347,7 +351,7 @@ dessertlover <- tibble(
 )
 
 athlete
-vegan
+healthnut
 normal
 dessertlover
 carnivore
@@ -377,7 +381,7 @@ sum_squared_errors <- function(props, baseline) {
 ```{r}
 #find the baseline diet that the user's meal belongs in
 find_diet_fit <- function(props, athlete, normal,
-                          vegan, dessertlover,
+                          healthnut, dessertlover,
                           carnivore, fastfoodlover) {
   
   best_fit <- 'athlete'
@@ -391,10 +395,10 @@ find_diet_fit <- function(props, athlete, normal,
     best_fit <- 'normal'
   }
   
-  vegan_err <- sum_squared_errors(props, vegan)
-  if (vegan_err < min) {
-    min <- vegan_err
-    best_fit <- 'vegan'
+  healthnut_err <- sum_squared_errors(props, healthnut)
+  if (healthnut_err < min) {
+    min <- healthnut_err
+    best_fit <- 'healthnut'
   }
   
   dessertlover_err <- sum_squared_errors(props, dessertlover)
@@ -422,7 +426,6 @@ find_diet_fit <- function(props, athlete, normal,
 ```
 
 
-
 4. Analyse Meal: the function gets the user's meal as input and returns the quantities of the protein, fats, and carbohydrates of the meal as well as the proportions of these macro nutrients. See the code below for the data wrangling required for this function.
 
 ```{r}
@@ -430,11 +433,12 @@ find_diet_fit <- function(props, athlete, normal,
 
 analyse_meal <- function(Meal) {
   Nutrients <- Meal |> 
+  inner_join(FoodNames, by = 'food_description') |> 
   inner_join(NutrientAmounts, by = 'food_id') |> 
   inner_join(NutrientNames, by = 'nutrient_id') |> 
-  filter(nutrient_name == 'PROTEIN' 
-         | nutrient_name == 'FAT (TOTAL LIPIDS)' 
-         | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)') |> 
+  filter(nutrient_name == 'PROTEIN' | nutrient_name == 'FAT (TOTAL LIPIDS)' | nutrient_name == 'CARBOHYDRATE, TOTAL (BY DIFFERENCE)') |> 
+  inner_join(MeasureNames, by = 'measure_description') |> 
+  inner_join(ConversionFactor, by = c('measure_id', 'food_id')) |> 
   mutate(new_value = nutrient_value * conversion_factor_value) |> 
   group_by(nutrient_name) |>
   summarise("value" = sum(new_value)) |>
