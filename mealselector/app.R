@@ -160,6 +160,17 @@ server <- function(input, output, session) {
   selected_foods <- reactiveVal(c()) 
   selected_measures <- reactiveVal(c()) 
   
+  meal <- reactive({
+    data <-  data.frame(food_item = selected_foods(), measurement = selected_measures())
+    return (data)
+  })
+  
+  meal_nutrients <- reactive({
+    foods <- meal()
+    analyzed <- analyse_meal(foods)
+    return (analyzed)
+  })
+  
   measurements <- NULL
   
   observeEvent(input$dropdown, {
@@ -183,8 +194,7 @@ server <- function(input, output, session) {
   
   
   output$my_meal <- renderDT({
-    my_dataframe <- data.frame(food_item = selected_foods(), measurement = selected_measures())
-    datatable(my_dataframe, options = list(paging = FALSE))
+    datatable(meal(), options = list(paging = FALSE))
   })
   
   
@@ -201,9 +211,9 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$analyzer, {
-    my_dataframe <- data.frame(food_item = selected_foods(), measurement = selected_measures())
-    if (nrow(my_dataframe) != 0) {
-      myNutrients <- analyse_meal(my_dataframe)
+    
+    if (length(selected_foods) != 0) {
+      myNutrients <- meal_nutrients()
       output$my_nutrients <- renderDT({
         datatable(myNutrients, options = list(paging = FALSE))
       })
@@ -238,7 +248,10 @@ server <- function(input, output, session) {
       )
       
       my_frame <- my_frame |> rename('baseline' = proportions)
-      my_meal <- myNutrients |> rename('meal' = proportions)
+      myNutrients <- meal_nutrients()
+      my_meal <- myNutrients |> 
+        rename('meal' = proportions) |> 
+        select(-value)
       
       bardata <- my_frame |> 
         inner_join(my_meal, by = "nutrient_name") |> 
