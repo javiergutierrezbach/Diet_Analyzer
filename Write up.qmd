@@ -33,7 +33,7 @@ The foundations of a data heavy project like the diet analyzer, lie on the selec
 \
 [Paragraph on the data wrangling done in the data set , some code to showcase how to access the data package, and a link to the explore the data package shiny app]{.underline}
 
-##  Project Description
+## Project Description
 
 ### Shiny App
 
@@ -49,7 +49,7 @@ The user would first come across the meal selector widget. Displayed as a dropdo
 
 \
 
-Once the user has selected his meal, he can then press the 'Analyze your meal button', which behind the scenes will calculate the amount of protein, fats and carbohydrates that his meal consists of depending on how much of each food item he consumed. In action, the app will present a table showcasing these findings in the form of a table while arranging the three nutrients in descending order. To give the user a clear understanding of his meal analysis the app will produce a pie chart of the proportions of these nutrients in your meal.Moreover, since one of the project’s main purposes was to compare the user’s diet with specific baseline diets, the user will also get feedback on the specific baseline diet that his meal matched with.
+Once the user has selected his meal, he can then press the 'Analyze your meal button', which behind the scenes will calculate the amount of protein, fats and carbohydrates that his meal consists of depending on how much of each food item he consumed. In action, the app will present a table showcasing these findings in the form of a table while arranging the three nutrients in descending order. To give the user a clear understanding of his meal analysis the app will produce a pie chart of the proportions of these nutrients in your meal. Moreover, since one of the project’s main purposes was to compare the user’s diet with specific baseline diets, the user will also get feedback on the specific baseline diet that his meal matched with.
 
 \
 
@@ -64,7 +64,7 @@ Finally, the last widget of the user interface will focus on helping the user re
 
 [Screenshot or video describing/showing this procedure]{.underline}
 
-### Data Wrangling  
+### Data Wrangling
 
 \
 To develop the Diet Analyzer Shiny app, extensive data wrangling was necessary. This involved organizing, cleaning, and transforming raw dietary data into a format suitable for analysis and visualization. Specifically, the data wrangling process included tasks such as joining tables, handling missing values, standardizing units of measurement, replacing characters, and ensuring data integrity. By performing these data wrangling steps, we were able to prepare a clean and structured dataset that served as the foundation for the Diet Analyzer app, enabling users to efficiently analyze and gain insights into their dietary habits.
@@ -121,13 +121,13 @@ fastfoodlover
 carnivore
 ```
 
-###  Functions 
+### Functions
 
 Once our data was ready to use, we created the functions necessary for the app. In more depth, we built the following functions: analyze meal, quantify nutrients, food group proportions, baseline diets, sum of squared errors, and diet fit. Explore below what each of the functions functionality was and how we assembled them.
 
 \
 \
-The analyze meal function gets the user's meal as input and returns the quantities of the protein, fats, and carbohydrates of the meal as well as the proportions of these macronutrients. [Explain the code in one to two sentences]{.underline}.See the code below for the data wrangling required for this function.  
+The analyze meal function gets the user's meal as input and returns the quantities of the protein, fats, and carbohydrates of the meal as well as the proportions of these macronutrients. Since all we have is the name of the food and name of the measure passed as input by the user, a lot of the code entails joining to the other tables in this highly relational data set. We get the nutrient values for these food items, selecting only those nutrients we care about, and then make use of the conversion factor scaling depending on the measure specified by the user. After getting these values, we sum thedm yp throughout all the food items in the meal to get the proportions of these macronutrients present in the meal. See the code below for the data wrangling required for this function.  
 
 ```{r}
 # Get the value of macro nutrients of our meal 
@@ -151,7 +151,7 @@ analyse_meal <- function(Meal) {
 }
 ```
 
-The quantify nutrients function is used to get the amount of a particular nutrient input by the user for a particular food item, also as input. Then the result is the amount of the nutrient that the food would contain for each possible measurement in the data set.[Explain the code in one to two sentences.]{.underline} This table will not necessarily be used in the app, but it was made by us for developing and exploration purposes.
+The quantify nutrients function is used to get the amount of a particular nutrient input by the user for a particular food item, also as input. Then the result is the amount of the nutrient that the food would contain for each possible measurement in the data set. The method again joins the nutrient tables, to query the specific nutrient the user cares about, then does the same for the food item, and by scaling the nutrient value with the conversion factor per measure, it displays how much of the nutrient the food would have for each measure. This table will not necessarily be used in the app, but it was made by us for developing and exploration purposes.
 
 ```{r}
 # To help us quantify nutrients based on how much of the food the user ate.
@@ -173,7 +173,7 @@ quantify_nutrient <- function(food, nutrient) {
 \
 \
 
-The food group proportions function takes the user's meal as input and returns the food group category of each food item selected as well as the quantity of each group category. [Explain the code in one to two sentences.]{.underline}This was made by us for developing and exploration purposes and is not used in the app.
+The food group proportions function takes the user's meal as input and returns the food group category of each food item selected as well as the quantity of each group category. This function is more simple, it categorizes each food item in the meal by its food_group_id entry (categorized by Health Canada). The outcome is a table with the quantity of items in the meal pertaining to each food group. This was made by us for developing and exploration purposes and is not used in the app.
 
 ```{r}
 # Count items in each food group
@@ -188,7 +188,7 @@ food_group_prop <- function(meal) {
 
 \
 
-The Sum of Squared Errors Algorithm is a function that compares the user's meal with the baseline diets.  We proceeded to use the famous optimization method of the least squares problem. This algorithm aims to minimize the sum of the squares of the differences between observed and predicted values, typically achieved through finding the parameters that best fit a linear model to the data. Below you can see the function of the coded version of this equation.
+The Sum of Squared Errors Algorithm is a function that computes the sum of the squared errors between the nutrient proportions of the user's meal and those of a specific baseline diet. This is joined with the find diet fit function to minimize the sum of the squares of the differences, in order to find the baseline diet that is 'closest' or to the trends or observations in the input. Below you can see the function of the coded version of this equation.
 
 ```{r}
 #sum of squared errors function
@@ -251,7 +251,7 @@ find_diet_fit <- function(props, athlete, normal,
 }
 ```
 
-##  Conclusion
+## Conclusion
 
 In essence, the data package was used exhaustively and we fulfilled the goals that the Nutrient Research Division at Health Canada intended when compiling this data set. As stated in their original documentation, the main token this package has is the measure and conversion factor tables that allow you to calculate the nutrient value of foods for different quantities eaten, and we exploited this advantage massively for creating our application. Using the Diet Analyzer, not only can you interactively choose foods and discover their nutrient contents, but you can also combine many of these to make your own meal in seconds, and compare it visually to other known diets to improve your own eating habits. 
 

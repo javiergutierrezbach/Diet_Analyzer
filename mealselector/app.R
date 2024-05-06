@@ -11,6 +11,7 @@ library(shiny)
 library(CanadianNutrient)
 library(DT)
 library(ggplot2)
+library(tidyr)
 
 
 athlete <- tibble(
