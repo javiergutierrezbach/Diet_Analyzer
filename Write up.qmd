@@ -179,6 +179,7 @@ The food group proportions function takes the user's meal as input and returns t
 # Count items in each food group
 food_group_prop <- function(meal) {
   OurFoodGroups <- meal |> 
+    inner_join(FoodNames, by = 'food_description') |> 
     inner_join(FoodGroup, by = 'food_group_id') |> 
     group_by(food_group_name) |> 
     summarise("Number of items" = n())
