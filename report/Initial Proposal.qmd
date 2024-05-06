@@ -1,0 +1,49 @@
+---
+title: "Diet Analyzer"
+author: "Javier Gutierrez Back & George Chaidemenos "
+date: "2024-04-09"
+date-format: iso
+format: pdf
+editor: source
+toc: true
+bibliography: report.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(mosaic)   
+library(tidyverse)
+library(mdsr)
+library(CanadianNutrient)
+library(stringr)
+```
+
+\newpage
+
+## Purpose
+
+We want to make it easy for people to visualise what they ate in a particular day in terms of their nutrients intake, and somehow quantify how 'balanced' their diet was. One question we would like to answer is what proportion of a person's meal was in each food group. Additionally, we would like people to be able to input to the program what they ate in the meal and have it say the amounts of each nutrient that they had. People would care about our project since it would be easier for them to find patterns in their eating habits and how to make it healthier perhaps or help them plan meals in advance.
+
+
+## Data 
+
+We found our data set in the data is plural website. It is called Canadian Nutrient and it is a relational data base that provides information about food descriptions, food groups, nutrients, and a method for calculating the amounts of these nutrients for different quantities of the food. The data set contains 12 tables in a csv format which were already documented and loaded as an R package.
+
+We will not be working with spatial data in shapefiles, or using an API to a live data source. (https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-2015-download-files.html)
+
+## Variables
+
+food: type of food
+nutrient: name of the nutrient
+nutrient unit: the unit of measure (g, mg)
+nutrient quantity: nutrient quantity in nutrient unit per 100 grams of the food
+measure name: type of quantity used to measure the food
+conversion factor value: the factor by which me multiply the nutrient quantity per the measure used
+food group: the general category the group belongs to
+
+## End Product
+
+We would hope to create a user interactive app through shiny where the user will input what foods they had eaten in a day and the app will provide the user with an analysis of their diet for that particular day. For example, create a pie chart or other visualization that shows what proportions of different food groups they consumed, and a detailed analysis of how much fat, protein or other specific nutrients they consumed. We would like the user to be able to specify the specific foods and quantities as closely to the ones on the data set to provide accurate data with the conversion factors. For both of these questions, we would like to compare the user's numbers with certain baseline diets, like an athlete, a bodybuilder, a health nut, keto diet, vegan, maybe gluten free, fast food enthusiast. That is, showing the food group proportions of for the corresponding diets, do some sort of calculation to see which one the user is closest too, and maybe provide sample diets or possible improvements to make the diet more balanced or to satisfy your objective diet requirements.
+
+For the Shiny app, we will probably like to have an 'input your meal' section, where the user can type in their foods and match them (with regular expressions in the back end) to the foods in the database. From there, you will see two sections, one with the food group proportion graph, and one with your nutrient intake in descending order. We could still figure out whether we want the baseline diet comparison in the same sections, or if we want another section below those with possible changes and the comparisons.
