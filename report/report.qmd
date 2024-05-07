@@ -131,26 +131,30 @@ analyse_meal <- function(Meal) {
 ```
 
 
+
 ```{r}
 #| include: false
 
 # To help us quantify nutrients based on how much of the food the user ate.
-quantify_nutrient <- function(food, nutrient) {
-  myprops <- NutrientNames |> 
-    inner_join(NutrientAmounts, by = 'nutrient_id') |> 
-    rename("vitamin_b12_in_g" = nutrient_value) |> 
-    filter(nutrient_name == nutrient) |> 
-    inner_join(FoodNames, by = 'food_id') |> 
-    filter(food_description == food) |> 
-    inner_join(ConversionFactor, by = 'food_id') |> 
-    inner_join(MeasureNames, by = 'measure_id') |> 
-    mutate(total_vitamin_b12_in_g = vitamin_b12_in_g * conversion_factor_value) |> 
-    select(measure_description, conversion_factor_value, total_vitamin_b12_in_g)
+quantify_nutrients <- function(meal) {
+  myprops <- meal |> 
+    inner_join(FoodNames, by = 'food_description') |> 
+    inner_join(NutrientAmounts, by = 'food_id') |> 
+    inner_join(MeasureNames, by = 'measure_description') |> 
+    inner_join(ConversionFactor, by = c('food_id', 'measure_id')) |> 
+    mutate(total_nutrient = nutrient_value * conversion_factor_value) |>
+    inner_join(NutrientNames, by = 'nutrient_id') |> 
+    select(nutrient_name, total_nutrient, nutrient_unit) |> 
+    group_by(nutrient_name, nutrient_unit) |> 
+    summarise(total_nutrient = sum(total_nutrient)) |> 
+    arrange(desc(total_nutrient)) |> 
+    select(nutrient_name, total_nutrient, nutrient_unit)
   return (myprops)
 }
 
 
 ```
+
 
 ```{r}
 #| include: false
@@ -268,6 +272,7 @@ pie(Nutrients$value, labels, main = "Diet Nutrient Proportions")
 
 To provide additional information about the diversity of the user's diet we are also going to display the food group categories of the meal. This will be done by the food_group_prop function found in the appendix. 
 In our example, the fried chicken is considered a poultry product while the beef pot roast, with browned potatoes, peas and corn and a cheese souffle are in the mixed dishes category.
+Evidently, the result of the function is more informative when a complete and varied meal is used as the input.
 
 ```{r}
 #find the food categories and their quantities
@@ -275,6 +280,14 @@ OurFoodGroups <- food_group_prop(Meal)
 
 OurFoodGroups
 
+```
+
+The other important aspect to investigate is all other nutrients that can be found in our diet. Perhaps you want to increase your Zinc , Potassium or Vitamin C intake; this following method will help us quantify that. This one is very similar to analyze meal, where it calculates the quantities of nutrients but for all of them and displays them in order. The units are also shown to know how each nutrient in our meal was measured. Very easy to see here is the calorie amount of the meal, which is of interest of many people in typical cases.
+
+```{r}
+OurNutrients <- quantify_nutrients(Meal)
+
+OurNutrients
 ```
 
 
@@ -361,7 +374,7 @@ fastfoodlover
 
 
 
-2. Sum of Squared Errors Algorithm: aiming to compare the user's meal with the baseline diets we decided to use the famus optimization method of the least squares problem. Below you can see the function of the coded version of this equation (sum_squared_errors)
+2. Sum of Squared Errors: aiming to compare the user's meal with the baseline diets we decided to use the famus optimization method of the least squares problem. Below you can see the function of the coded version of this equation (sum_squared_errors)
 
 ```{r}
 #sum of squared errors function
@@ -377,7 +390,7 @@ sum_squared_errors <- function(props, baseline) {
 
 
 
-3. Find diet fit: combining the functions from appendix 1 and 2, the find diet fit function below calculates the sum of the squared errors of the user's meal each baseline diet. The function then proceeds to print the baseline diet that had the smallest least squares solution, or in other words the baseline diet that matched to users meal.
+3. Find diet fit Algorithm: combining the functions from appendix 1 and 2, the find diet fit function below calculates the sum of the squared errors of the user's meal each baseline diet. The function then proceeds to print the baseline diet that had the smallest least squares solution, or in other words the baseline diet that matched to users meal.
 
 ```{r}
 #find the baseline diet that the user's meal belongs in
@@ -468,20 +481,22 @@ food_group_prop <- function(meal) {
 }
 ```
 
-6. Quantify Nutrients: this function is used to get the amount of a particular nutrient input by the user for a particular food item, also as input. Then the result is the amount of the nutrient that the food would contain for each possible measurement in the data set. This table will not necessarily be used in the app, or maybe a variation of it will be used, but it ws made by us for developing and exploration purposes.
+6. Quantify Nutrients: this function is used to get the amount of all nutrients for a particular meal, also as input. Then the result is a table showing the amount of the nutrient that the meal would contain in descending order, as well as a column showing the units in which it is measured. 
 ```{r}
 # To help us quantify nutrients based on how much of the food the user ate.
-quantify_nutrient <- function(food, nutrient) {
-  myprops <- NutrientNames |> 
-    inner_join(NutrientAmounts, by = 'nutrient_id') |> 
-    rename("vitamin_b12_in_g" = nutrient_value) |> 
-    filter(nutrient_name == nutrient) |> 
-    inner_join(FoodNames, by = 'food_id') |> 
-    filter(food_description == food) |> 
-    inner_join(ConversionFactor, by = 'food_id') |> 
-    inner_join(MeasureNames, by = 'measure_id') |> 
-    mutate(total_vitamin_b12_in_g = vitamin_b12_in_g * conversion_factor_value) |> 
-    select(measure_description, conversion_factor_value, total_vitamin_b12_in_g)
+quantify_nutrients <- function(meal) {
+  myprops <- meal |> 
+    inner_join(FoodNames, by = 'food_description') |> 
+    inner_join(NutrientAmounts, by = 'food_id') |> 
+    inner_join(MeasureNames, by = 'measure_description') |> 
+    inner_join(ConversionFactor, by = c('food_id', 'measure_id')) |> 
+    mutate(total_nutrient = nutrient_value * conversion_factor_value) |>
+    inner_join(NutrientNames, by = 'nutrient_id') |> 
+    select(nutrient_name, total_nutrient, nutrient_unit) |> 
+    group_by(nutrient_name, nutrient_unit) |> 
+    summarise(total_nutrient = sum(total_nutrient)) |> 
+    arrange(desc(total_nutrient)) |> 
+    select(nutrient_name, total_nutrient, nutrient_unit)
   return (myprops)
 }
 

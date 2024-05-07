@@ -61,7 +61,7 @@ find_diet_fit <- function(props, athlete, normal,
                           healthnut, dessertlover,
                           carnivore, fastfoodlover) {
   
-  best_fit <- 'athlete'
+  best_fit <- 'Athlete'
   athlete_err <- sum_squared_errors(props, athlete)
   
   min <- athlete_err
@@ -69,31 +69,31 @@ find_diet_fit <- function(props, athlete, normal,
   normal_err <- sum_squared_errors(props, normal)
   if (normal_err < min) {
     min <- normal_err
-    best_fit <- 'normal'
+    best_fit <- 'Regular'
   }
   
   healthnut_err <- sum_squared_errors(props, healthnut)
   if (healthnut_err < min) {
     min <- healthnut_err
-    best_fit <- 'healthnut'
+    best_fit <- 'Health Nut'
   }
   
   dessertlover_err <- sum_squared_errors(props, dessertlover)
   if (dessertlover_err < min) {
     min <- dessertlover_err
-    best_fit <- 'dessertlover'
+    best_fit <- 'Dessert Lover'
   }
   
   carnivore_err <- sum_squared_errors(props, carnivore)
   if (carnivore_err < min) {
     min <- carnivore_err
-    best_fit <- 'carnivore'
+    best_fit <- 'Carnivore'
   }
   
   fastfoodlover_err <- sum_squared_errors(props, fastfoodlover)
   if (fastfoodlover_err < min) {
     min <- fastfoodlover_err
-    best_fit <- 'fastfoodlover'
+    best_fit <- 'Fast Food Lover'
   }
   
   return (best_fit)
@@ -126,31 +126,114 @@ analyse_meal <- function(Meal) {
   return (Nutrients)
 }
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
+quantify_nutrients <- function(meal) {
+  myprops <- meal |> 
+    inner_join(FoodNames, by = c('food_item' = 'food_description')) |> 
+    inner_join(NutrientAmounts, by = 'food_id') |> 
+    inner_join(MeasureNames, by = c('measurement' = 'measure_description')) |> 
+    inner_join(ConversionFactor, by = c('food_id', 'measure_id')) |> 
+    mutate(total_nutrient = nutrient_value * conversion_factor_value) |>
+    inner_join(NutrientNames, by = 'nutrient_id') |> 
+    select(nutrient_name, total_nutrient, nutrient_unit) |> 
+    group_by(nutrient_name, nutrient_unit) |> 
+    summarise(total_nutrient = sum(total_nutrient)) |> 
+    arrange(desc(total_nutrient)) |> 
+    select(nutrient_name, total_nutrient, nutrient_unit)
+  return (myprops)
+}
 
-    
-        # Show a plot of the generated distribution
-        mainPanel(
-           selectInput("dropdown", label = "What did you eat today?",
-                       choices = c("-", unique(FoodNames$food_description))
-                      ),
-           selectInput("measure_list", label = "How much of it did you eat?",
-                       choices = NULL),
-           actionButton("add_button", "Add to your meal"),
-           actionButton("remove_button", "Remove from your meal"),
-           DTOutput("my_meal"),
-           actionButton("analyzer", "Analyze your Meal!"),
-           DTOutput("my_nutrients"),
-           plotOutput("nutrientPie"),
-           textOutput("yourFit"),
-           selectInput("baselines", label = "Choose a Baseline Diet",
-                       choices = c("-", "athlete", "normal", "healthnut", "fastfoodlover", "carnivore", "dessertlover")
-           ),
-           actionButton("compare", "Compare your Meal!"),
-           plotOutput("bar")
+# Define UI for application that draws a histogram
+ui <- navbarPage(
+        "Diet Analyzer",
+        tabPanel("Input your Meal",
+                 # Show a plot of the generated distribution
+                 
+                 tags$head(
+                   tags$style(HTML("
+                    .spacer {
+                        margin-bottom: 20px; 
+                       }
+                     "))
+                 ),
+                 fluidRow(
+                   column(5,
+                          h3("Pick your food items:"),
+                          selectInput("dropdown", label = "What did you eat today?",
+                                      choices = c("-", unique(FoodNames$food_description))
+                          ),
+                          selectInput("measure_list", label = "How much of it did you eat?",
+                                      choices = NULL),
+                          actionButton("add_button", "Add to your meal"),
+                          actionButton("remove_button", "Remove from your meal")
+                          ),
+                   column(7,
+                          h3(textOutput("meal_heading")),
+                          DTOutput("my_meal")
+                          )
+                 ),
+                 div(class = "spacer"),
+                 
+                 actionButton("analyzer", "Analyze your Meal!"),
+                 
+                 DTOutput("my_nutrients"),
+                 
+                 div(class = "spacer"),
+                 
+                 fluidRow(
+                   
+                   column(6,
+                          div(style = "height: 160px"),
+                          
+                          plotOutput("nutrientPie")
+                          
+                          ),
+                   column(6,
+                          h4(textOutput("nutrient_heading")),
+                          div(style = "height: 25px"),
+                          DTOutput("nutrientTable")
+                          )
+                   
+                 ),
+                 
+                 div(class = "spacer"),
+                 
+                 h4(textOutput("yourFit")),
+                 
+                 div(style = "height: 30px"),
+  
+                 conditionalPanel(
+                   condition = "input.analyzer > 0",
+                   h3("Compare your Meal to Baseline Diets"),
+                   div(style = "height: 20px"),
+                   selectInput("baselines", label = "Choose a Baseline Diet: ",
+                               choices = c("-", "Athlete", "Regular", "Health Nut", "Fast Food Lover", "Carnivore", "Dessert Lover")
+                   ),
+                   actionButton("compare", "Compare your Meal!"),
+                   plotOutput("bar")
+                   
+                 ),
+                 
+                 ),
+        tabPanel("Explore the Data Set",
+                 fluidRow(
+                   column(1),
+                   column(11,
+                   
+                   radioButtons("DataSet", "Select a Data Set to Explore:",
+                                choices = c("Food Names", "Food Groups", "Food Sources", 
+                                            "Measure Names", "Conversion Factor", 
+                                            "Nutrient Names", "Nutrient Amounts", 
+                                            "Nutrient Sources", "Yield Names", 
+                                            "Yield Amounts", "Refuse Names", "Refuse Amounts"),
+                                selected = "Food Names")
+                   )
+                 ),
+                 mainPanel(
+                   DTOutput("dataset")
+                 )
+                 )
            
-        )
+        
     
 )
 
@@ -171,6 +254,27 @@ server <- function(input, output, session) {
     return (analyzed)
   })
   
+  
+  selectedData <- reactive({
+    switch(input$DataSet,
+           "Food Names" = FoodNames,
+           "Food Groups" = FoodGroup,
+           "Food Sources" = FoodSources,
+           "Measure Names" = MeasureNames,
+           "Conversion Factor" = ConversionFactor,
+           "Nutrient Names" = NutrientNames,
+           "Nutrient Amounts" = NutrientAmounts,
+           "Nutrient Sources" = NutrientSources,
+           "Yield Names" = YieldNames,
+           "Yield Amounts" = YieldAmounts,
+           "Refuse Names" = RefuseNames,
+           "Refuse Amounts" = RefuseAmounts)
+  })
+  
+  output$dataset <- renderDT({
+    datatable(data = selectedData(), options = list(pageLength = 5))
+  })
+  
   measurements <- NULL
   
   observeEvent(input$dropdown, {
@@ -179,6 +283,11 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$add_button, {
+    
+    output$meal_heading <- renderText(
+      "Selected Meal: "
+    )
+    
     if(input$dropdown != "-" & input$measure_list != "-"){
       
       current_foods <- selected_foods()
@@ -219,14 +328,27 @@ server <- function(input, output, session) {
       })
       
       output$nutrientPie <- renderPlot({
-        pie(myNutrients$proportions, labels = myNutrients$nutrient_name, 
+        pie(myNutrients$proportions, labels = c("Carbohydrates", "Fats", "Protein"), 
             col = c("wheat3", "orange", "limegreen"), main = "Your Nutrient Proportions")
       })
-    output$yourFit <- renderText(
+      
+      output$nutrient_heading <- renderText(
+        "Highest Amounts of Nutrients in your Meal: "
+      )
+      
+      currentMeal <- meal()
+      nutrientlist <- quantify_nutrients(currentMeal)
+      
+      output$nutrientTable <- renderDT({
+        datatable(nutrientlist, options = list(paging = TRUE))
+      })
+        
+      output$yourFit <- renderText(
       paste("Your meal is most comparable to the following diet: ",  find_diet_fit(myNutrients, athlete, normal,
                                                                                    healthnut, dessertlover,
                                                                                    carnivore, fastfoodlover))
-    )
+      )
+    
       
     }
     
@@ -239,23 +361,24 @@ server <- function(input, output, session) {
       
       switch(
         input$baselines,
-        "athlete" = my_frame <- athlete,
-        "normal" = my_frame <- normal,
-        "healthnut" = my_frame <- healthnut,
-        "fastfoodlover" = my_frame <- fastfoodlover,
-        "carnivore" = my_frame <- carnivore,
-        "dessertlover" = my_frame <- dessertlover
+        "Athlete" = my_frame <- athlete,
+        "Regular" = my_frame <- normal,
+        "Health Nut" = my_frame <- healthnut,
+        "Fast Food Lover" = my_frame <- fastfoodlover,
+        "Carnivore" = my_frame <- carnivore,
+        "Dessert Lover" = my_frame <- dessertlover
       )
       
-      my_frame <- my_frame |> rename('baseline' = proportions)
+      my_frame <- my_frame |> 
+        rename('Baseline Diet' = proportions)
       myNutrients <- meal_nutrients()
       my_meal <- myNutrients |> 
-        rename('meal' = proportions) |> 
+        rename('Your Meal' = proportions) |> 
         select(-value)
       
       bardata <- my_frame |> 
         inner_join(my_meal, by = "nutrient_name") |> 
-        pivot_longer(cols = c(baseline, meal),
+        pivot_longer(cols = c(`Your Meal`, `Baseline Diet`),
                      names_to = "frame",
                      values_to = "proportions")
       
@@ -268,7 +391,11 @@ server <- function(input, output, session) {
             x = 'Nutrient Name',
             y = 'Proportions',
             fill = '',
-            title = "Your Meal's Nutrient Proportions Compared to a Baseline Diet"
+            title = "Side by Side Nutrient Proportions with the Diet of Choice"
+          ) +
+          theme(
+            plot.title = element_text(hjust = 0.5),
+            text = element_text(size = 12)  # Set font size to 12
           )
       })
     }
