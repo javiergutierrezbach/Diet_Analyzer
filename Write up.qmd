@@ -37,7 +37,9 @@ The foundations of a data heavy project like the diet analyzer, lie on the selec
 
 ### Shiny App
 
-As explained above the final product of the project is an interactive shiny app that lets the user effortlessly select his meal and receive feedback on his diet. In order to demonstrate the app's functionality, let's take a step by step approach to explore the app’s user interface. 
+As explained above the final product of the project is an interactive shiny app that lets the user effortlessly select his meal and receive feedback on his diet. In order to demonstrate the app's functionality, let's take a step by step approach to explore the app’s user interface.
+
+ 
 
 ![]()
 
