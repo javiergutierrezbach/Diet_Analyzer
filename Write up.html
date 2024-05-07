@@ -128,24 +128,52 @@ The purpose of this project is to help people to visualize what they eat on a pa
 <section id="shiny-app" class="level3">
 <h3 class="anchored" data-anchor-id="shiny-app">Shiny App</h3>
 <p>As explained above the final product of the project is an interactive shiny app that lets the user effortlessly select his meal and receive feedback on his diet. In order to demonstrate the app’s functionality, let’s take a step by step approach to explore the app’s user interface.&nbsp;</p>
-<p><u>Screenshot of the app ui</u>&nbsp;</p>
-<p>The user would first come across the meal selector widget. Displayed as a dropdown button with an interactive search bar, it lets the user easily select the meal they had during the day by choosing one food item at a time. Once a food item is selected, (eg. Chicken, broiler, light meat and skin, roasted), the user will be able to choose the quantity of specific food he consumed from the ones available in the data set (eg. 1/2 bird, or 150ml chopped or diced). From here, the user can proceed to add the food item to his meal. The user’s meal is exhibited as a table making it easy for the user to understand. If the user makes a mistake, he can simply remove the unwanted food item by selecting it and clicking the remove from list button.&nbsp;</p>
+<p><img src=".png" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshots/homepage.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure 1: Shiny app Home page</figcaption>
+</figure>
+</div>
+<p>The user would first come across the meal selector widget. Displayed as a dropdown button with an interactive search bar, it lets the user easily select the meal they had during the day by choosing one food item at a time. Once a food item is selected, (eg. Chicken Parmesan, and Greek Yogurt), the user will be able to choose the quantity of specific food he consumed from the ones available in the data set (eg. 1 serving and 125 ml). From here, the user can proceed to add the food item to his meal. The user’s meal is exhibited as a table making it easy for the user to understand. If the user makes a mistake, he can simply remove the unwanted food item by selecting it and clicking the remove from your meal button.&nbsp;</p>
 <p><br>
 </p>
-<p><u>Screenshot or video describing/showing this procedure</u></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshots/select%20meal.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure 2: Select meal procedure</figcaption>
+</figure>
+</div>
 <p><br>
 </p>
-<p>Once the user has selected his meal, he can then press the ‘Analyze your meal button’, which behind the scenes will calculate the amount of protein, fats and carbohydrates that his meal consists of depending on how much of each food item he consumed. In action, the app will present a table showcasing these findings in the form of a table while arranging the three nutrients in descending order. To give the user a clear understanding of his meal analysis the app will produce a pie chart of the proportions of these nutrients in your meal.Moreover, since one of the project’s main purposes was to compare the user’s diet with specific baseline diets, the user will also get feedback on the specific baseline diet that his meal matched with.</p>
+<p>Once the user has selected his meal, he can then press the ‘Analyze your meal button’, which behind the scenes will calculate the amount of protein, fats and carbohydrates that his meal consists of depending on how much of each food item he consumed. In action, the app will present a table showcasing these findings in the form of a table while arranging the three nutrients in descending order. To give the user a clear understanding of his meal analysis the app will produce a pie chart of the proportions of these nutrients in your meal. In addition to the chart the user will be able to see the highest amounts of nutrients in his meal (through a table arranged in descending order). Lastly, since one of the project’s main purposes was to compare the user’s diet with specific baseline diets, the user will also get feedback on the specific baseline diet that his meal matched with.</p>
 <p><br>
 </p>
-<p><u>Screenshot or video describing/showing this procedure</u></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshots/analyze%20meal.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure 3: Analyze meal</figcaption>
+</figure>
+</div>
 <p><br>
 <br>
 </p>
 <p>Finally, the last widget of the user interface will focus on helping the user reach his nutritional goals by comparing his meal with his desired baseline diet. Specifically, the user will be able to choose one of the baseline diets and compare his nutrient intake with the average person in that diet in a side by side bar chart giving him a clear view on whether he should increase or decrease his consumption of a certain nutrient. This will be done with the help of a dropdown button where the user will be able to select the diet that he wants to compare his meal with and by clicking the action button compare diet.</p>
 <p><br>
 </p>
-<p><u>Screenshot or video describing/showing this procedure</u></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshots/compare%20with%20basline.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure 4: Baseline diet comparison</figcaption>
+</figure>
+</div>
+<p>The user will also have the ability to explore our data set by clicking the explore data set button on the top right. He would then be able to look around all the twelve tables of the data set and even use a search bar to find specific nutrients or food items that he desires.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshots/explore%20data%20set.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure 5: Explore CanadianNutrients data set</figcaption>
+</figure>
+</div>
 </section>
 <section id="data-wrangling" class="level3">
 <h3 class="anchored" data-anchor-id="data-wrangling">Data Wrangling</h3>
@@ -253,7 +281,7 @@ To develop the Diet Analyzer Shiny app, extensive data wrangling was necessary. 
 <p>Once our data was ready to use, we created the functions necessary for the app. In more depth, we built the following functions: analyze meal, quantify nutrients, food group proportions, baseline diets, sum of squared errors, and diet fit. Explore below what each of the functions functionality was and how we assembled them.</p>
 <p><br>
 <br>
-The analyze meal function gets the user’s meal as input and returns the quantities of the protein, fats, and carbohydrates of the meal as well as the proportions of these macronutrients. <u>Explain the code in one to two sentences</u>.See the code below for the data wrangling required for this function.&nbsp;&nbsp;</p>
+The analyze meal function gets the user’s meal as input and returns the quantities of the protein, fats, and carbohydrates of the meal as well as the proportions of these macronutrients. Since all we have is the name of the food and name of the measure passed as input by the user, a lot of the code entails joining to the other tables in this highly relational data set. We get the nutrient values for these food items, selecting only those nutrients we care about, and then make use of the conversion factor scaling depending on the measure specified by the user. After getting these values, we sum thedm yp throughout all the food items in the meal to get the proportions of these macronutrients present in the meal. See the code below for the data wrangling required for this function.&nbsp;&nbsp;</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the value of macro nutrients of our meal </span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -275,40 +303,43 @@ The analyze meal function gets the user’s meal as input and returns the quanti
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (Nutrients)</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The quantify nutrients function is used to get the amount of a particular nutrient input by the user for a particular food item, also as input. Then the result is the amount of the nutrient that the food would contain for each possible measurement in the data set.<u>Explain the code in one to two sentences.</u> This table will not necessarily be used in the app, but it was made by us for developing and exploration purposes.</p>
+<p>The quantify nutrients function is used to get the amount of all nutrients for a particular meal. Then the result is a table showing the amount of the nutrient that the meal would contain in descending order, as well as a column showing the units in which it is measured. This function makes it very easy to see the calorie amount of the meal, which is of interest of many people in typical cases. Additionally, if you want to increase your intake of Zinc, Iron, or maybe Vitamin C, this will help you to easily quantify that.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To help us quantify nutrients based on how much of the food the user ate.</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>quantify_nutrient <span class="ot">&lt;-</span> <span class="cf">function</span>(food, nutrient) {</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  myprops <span class="ot">&lt;-</span> NutrientNames <span class="sc">|&gt;</span> </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(NutrientAmounts, <span class="at">by =</span> <span class="st">'nutrient_id'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="st">"vitamin_b12_in_g"</span> <span class="ot">=</span> nutrient_value) <span class="sc">|&gt;</span> </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(nutrient_name <span class="sc">==</span> nutrient) <span class="sc">|&gt;</span> </span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(FoodNames, <span class="at">by =</span> <span class="st">'food_id'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(food_description <span class="sc">==</span> food) <span class="sc">|&gt;</span> </span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(ConversionFactor, <span class="at">by =</span> <span class="st">'food_id'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(MeasureNames, <span class="at">by =</span> <span class="st">'measure_id'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_vitamin_b12_in_g =</span> vitamin_b12_in_g <span class="sc">*</span> conversion_factor_value) <span class="sc">|&gt;</span> </span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(measure_description, conversion_factor_value, total_vitamin_b12_in_g)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (myprops)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>quantify_nutrients <span class="ot">&lt;-</span> <span class="cf">function</span>(meal) {</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  myprops <span class="ot">&lt;-</span> meal <span class="sc">|&gt;</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(FoodNames, <span class="at">by =</span> <span class="st">'food_description'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(NutrientAmounts, <span class="at">by =</span> <span class="st">'food_id'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(MeasureNames, <span class="at">by =</span> <span class="st">'measure_description'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(ConversionFactor, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">'food_id'</span>, <span class="st">'measure_id'</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_nutrient =</span> nutrient_value <span class="sc">*</span> conversion_factor_value) <span class="sc">|&gt;</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(NutrientNames, <span class="at">by =</span> <span class="st">'nutrient_id'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(nutrient_name, total_nutrient, nutrient_unit) <span class="sc">|&gt;</span> </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(nutrient_name, nutrient_unit) <span class="sc">|&gt;</span> </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">total_nutrient =</span> <span class="fu">sum</span>(total_nutrient)) <span class="sc">|&gt;</span> </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(total_nutrient)) <span class="sc">|&gt;</span> </span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(nutrient_name, total_nutrient, nutrient_unit)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (myprops)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><br>
 <br>
 </p>
-<p>The food group proportions function takes the user’s meal as input and returns the food group category of each food item selected as well as the quantity of each group category. <u>Explain the code in one to two sentences.</u>This was made by us for developing and exploration purposes and is not used in the app.</p>
+<p>The food group proportions function takes the user’s meal as input and returns the food group category of each food item selected as well as the quantity of each group category. This function is more simple, it categorizes each food item in the meal by its food_group_id entry (categorized by Health Canada). The outcome is a table with the quantity of items in the meal pertaining to each food group. This was made by us for developing and exploration purposes and is not used in the app.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count items in each food group</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>food_group_prop <span class="ot">&lt;-</span> <span class="cf">function</span>(meal) {</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  OurFoodGroups <span class="ot">&lt;-</span> meal <span class="sc">|&gt;</span> </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(FoodGroup, <span class="at">by =</span> <span class="st">'food_group_id'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(food_group_name) <span class="sc">|&gt;</span> </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="st">"Number of items"</span> <span class="ot">=</span> <span class="fu">n</span>())</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (OurFoodGroups)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(FoodNames, <span class="at">by =</span> <span class="st">'food_description'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(FoodGroup, <span class="at">by =</span> <span class="st">'food_group_id'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(food_group_name) <span class="sc">|&gt;</span> </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="st">"Number of items"</span> <span class="ot">=</span> <span class="fu">n</span>())</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (OurFoodGroups)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><br>
 </p>
-<p>The Sum of Squared Errors Algorithm is a function that compares the user’s meal with the baseline diets.&nbsp; We proceeded to use the famous optimization method of the least squares problem. This algorithm aims to minimize the sum of the squares of the differences between observed and predicted values, typically achieved through finding the parameters that best fit a linear model to the data. Below you can see the function of the coded version of this equation.</p>
+<p>The Sum of Squared Errors Algorithm is a function that computes the sum of the squared errors between the nutrient proportions of the user’s meal and those of a specific baseline diet. This is joined with the find diet fit function to minimize the sum of the squares of the differences, in order to find the baseline diet that is ‘closest’ or to the trends or observations in the input. Below you can see the function of the coded version of this equation.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sum of squared errors function</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>sum_squared_errors <span class="ot">&lt;-</span> <span class="cf">function</span>(props, baseline) {</span>

@@ -39,21 +39,23 @@ The foundations of a data heavy project like the diet analyzer, lie on the selec
 
 As explained above the final product of the project is an interactive shiny app that lets the user effortlessly select his meal and receive feedback on his diet. In order to demonstrate the app's functionality, let's take a step by step approach to explore the app’s user interface. 
 
-[Screenshot of the app ui]{.underline} 
+![]()
 
-The user would first come across the meal selector widget. Displayed as a dropdown button with an interactive search bar, it lets the user easily select the meal they had during the day by choosing one food item at a time. Once a food item is selected, (eg. Chicken, broiler, light meat and skin, roasted), the user will be able to choose the quantity of specific food he consumed from the ones available in the data set (eg. 1/2 bird, or 150ml chopped or diced). From here, the user can proceed to add the food item to his meal. The user’s meal is exhibited as a table making it easy for the user to understand. If the user makes a mistake, he can simply remove the unwanted food item by selecting it and clicking the remove from list button. 
+![Figure 1: Shiny app Home page](Screenshots/homepage.png)
 
-\
-
-[Screenshot or video describing/showing this procedure]{.underline}
+The user would first come across the meal selector widget. Displayed as a dropdown button with an interactive search bar, it lets the user easily select the meal they had during the day by choosing one food item at a time. Once a food item is selected, (eg. Chicken Parmesan, and Greek Yogurt), the user will be able to choose the quantity of specific food he consumed from the ones available in the data set (eg. 1 serving and 125 ml). From here, the user can proceed to add the food item to his meal. The user’s meal is exhibited as a table making it easy for the user to understand. If the user makes a mistake, he can simply remove the unwanted food item by selecting it and clicking the remove from your meal button. 
 
 \
 
-Once the user has selected his meal, he can then press the 'Analyze your meal button', which behind the scenes will calculate the amount of protein, fats and carbohydrates that his meal consists of depending on how much of each food item he consumed. In action, the app will present a table showcasing these findings in the form of a table while arranging the three nutrients in descending order. To give the user a clear understanding of his meal analysis the app will produce a pie chart of the proportions of these nutrients in your meal. Moreover, since one of the project’s main purposes was to compare the user’s diet with specific baseline diets, the user will also get feedback on the specific baseline diet that his meal matched with.
+![Figure 2: Select meal procedure](Screenshots/select meal.png)
 
 \
 
-[Screenshot or video describing/showing this procedure]{.underline}
+Once the user has selected his meal, he can then press the 'Analyze your meal button', which behind the scenes will calculate the amount of protein, fats and carbohydrates that his meal consists of depending on how much of each food item he consumed. In action, the app will present a table showcasing these findings in the form of a table while arranging the three nutrients in descending order. To give the user a clear understanding of his meal analysis the app will produce a pie chart of the proportions of these nutrients in your meal. In addition to the chart the user will be able to see the highest amounts of nutrients in his meal (through a table arranged in descending order). Lastly, since one of the project’s main purposes was to compare the user’s diet with specific baseline diets, the user will also get feedback on the specific baseline diet that his meal matched with.
+
+\
+
+![Figure 3: Analyze meal](Screenshots/analyze meal.png)
 
 \
 \
@@ -62,7 +64,11 @@ Finally, the last widget of the user interface will focus on helping the user re
 
 \
 
-[Screenshot or video describing/showing this procedure]{.underline}
+![Figure 4: Baseline diet comparison](Screenshots/compare with basline.png)
+
+The user will also have the ability to explore our data set by clicking the explore data set button on the top right. He would then be able to look around all the twelve tables of the data set and even use a search bar to find specific nutrients or food items that he desires.
+
+![Figure 5: Explore CanadianNutrients data set](Screenshots/explore data set.png)
 
 ### Data Wrangling
 
