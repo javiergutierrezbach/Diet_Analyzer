@@ -1,7 +1,7 @@
 ---
 title: "Diet Analyzer"
 author: "Javier Gutierrez Back & George Chaidemenos "
-date: "2024-05-08"
+date: "2024-05-09"
 date-format: iso
 format: pdf
 editor: source
@@ -31,9 +31,12 @@ The goal of this project is to make it easy for people to visualize what they ea
 
 Data
 
-We sourced our data set from the data is plural website. It is called Canadian Nutrient and it is a relational data base that provides information about food descriptions, food groups, nutrients, and a method for calculating the amounts of these nutrients for different quantities of the food. The data set contains 12 tables in a csv format which were already documented and loaded as an R package.
+The foundations of a data heavy project like the diet analyzer, lie on the selection of the right, reliable, data set. Specifically, to assure this, we sourced our data set from the data is plural website. It is called Canadian Nutrient and it is a relational database that provides information about food descriptions, food groups, nutrients, as well as a method for calculating the amounts of these nutrients for different quantities of food. It was built using the Canadian Nutrient File Compilation of Canadian Composition Data database published by the Nutrition Research Division, Food Directoriate, Health Products and Food Branch at Health Canada. The data set contains 12 tables in a csv format which were already documented and loaded as an R package (https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-2015-download-files.html). 
 
-We will not be working with spatial data in shapefiles, or using an API to a live data source. (https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-2015-download-files.html)
+You can install the package by running:
+
+devtools::install_github("STAT231-S24/CanadianNutrient")
+
 
 Variables: 
 

@@ -1,7 +1,7 @@
 ---
 title: "Diet Analyzer Write up"
 author: "Javier Gutierrez Back & George Chaidemenos "
-date: "2024-05-05"
+date: "2024-05-09"
 format: html
 editor: visual
 ---
@@ -27,11 +27,15 @@ The purpose of this project is to help people to visualize what they eat on a pa
 
 ## Data Set
 
-The foundations of a data heavy project like the diet analyzer, lie on the selection of the right, reliable, data set. Specifically, to assure this, we sourced our data set from the data is plural website. It is called Canadian Nutrient and it is a relational database that provides information about food descriptions, food groups, nutrients, as well as a method for calculating the amounts of these nutrients for different quantities of food. The data set contains 12 tables in a csv format which were already documented and loaded as an R package (https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-2015-download-files.html).
+The foundations of a data heavy project like the diet analyzer, lie on the selection of the right, reliable, data set. Specifically, to assure this, we sourced our data set from the data is plural website. It is called Canadian Nutrient and it is a relational database that provides information about food descriptions, food groups, nutrients, as well as a method for calculating the amounts of these nutrients for different quantities of food. It was built using the Canadian Nutrient File Compilation of Canadian Composition Data database published by the Nutrition Research Division, Food Directoriate, Health Products and Food Branch at Health Canada. The data set contains 12 tables in a csv format which were already documented and loaded as an R package (https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-2015-download-files.html).
 
-\
-\
-[Paragraph on the data wrangling done in the data set , some code to showcase how to access the data package, and a link to the explore the data package shiny app]{.underline}
+You can install the package by running:
+
+```{r}
+devtools::install_github("STAT231-S24/CanadianNutrient")
+```
+
+Since our data set played a vital role for our project we decided to showcase it inside the diet analyzer app in the form of a DT where the user will be able to select between the twelve tables and explore them using an interactive search bar. More information about the dataset user interface will be provided in the Shiny app section of the write up.\
 
 ## Project Description
 
@@ -70,18 +74,16 @@ Finally, the last widget of the user interface will focus on helping the user re
 
 The user will also have the ability to explore our data set by clicking the explore data set button on the top right. He would then be able to look around all the twelve tables of the data set and even use a search bar to find specific nutrients or food items that he desires.
 
-![Figure 5: Explore CanadianNutrients data set](Screenshots/explore%20data%20set.png)
+![Figure 5: Explore CanadianNutrients Dataset](Screenshots/explore%20data%20set.png)
 
 ### Data Wrangling
 
 \
 To develop the Diet Analyzer Shiny app, extensive data wrangling was necessary. This involved organizing, cleaning, and transforming raw dietary data into a format suitable for analysis and visualization. Specifically, the data wrangling process included tasks such as joining tables, handling missing values, standardizing units of measurement, replacing characters, and ensuring data integrity. By performing these data wrangling steps, we were able to prepare a clean and structured dataset that served as the foundation for the Diet Analyzer app, enabling users to efficiently analyze and gain insights into their dietary habits.
 
-\
+Specifically, in order to get a table with the user's meal, we had to gather information about all the different food items and their nutrients, measurements, food groups and proportions. This proceedure was done by completing multiple joins. Always joining by food_id, we connected the tables food names with food groups, nutrient names, and nutrient amounts.\
 
-[explain/expand this a bit more with examples]{.underline}
-
-\
+Another problem that we faced when cleaning up our data was that in the french translation of the food, the column food_description_f located in the food names table, the shiny app was unable to read some of the French characters which caused issues in our search bar and was visually unpleasant. We had to tackle this problem manually since all the functions wee tried to use failed to solve this issue.
 
 We also created six different baseline diets based on the proportions of macronutrients (protein, fat and carbohydrates) that each diet generally follows.These diets are athlete, normal, health nut, fast food lover, dessert lover, and carnivore diet. We displayed each diet in each own tibble as you can see below.
 
