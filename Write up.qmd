@@ -18,7 +18,7 @@ library(stringr)
 
 ## Introduction
 
-Imagine if you had a personal dietologist with you at all times that analyzes all your meals, tracks your diet and helps you achieve your health goals. Somewhat expensive right? And maybe even annoying, if he follows you around everywhere!! What if we told you that in this project we did exactly that, except we replaced the dietologist with a free, accessible, interactive app.  If you are interested in reaching your diet milestones or exploring how data science is implemented to create a personalized diet analyzer then you are in the right place.
+Imagine if you had a personal dietitian with you at all times that analyzes all your meals, tracks your diet and helps you achieve your health goals. Somewhat expensive right? And maybe even annoying, if he follows you around everywhere!! What if we told you that in this project we did exactly that, except we replaced the dietitian with a free, accessible, interactive app.  If you are interested in reaching your diet milestones or exploring how data science is implemented to create a personalized diet analyzer then you are in the right place.
 
 \
 The purpose of this project is to help people to visualize what they eat on a particular day in terms of their nutrients intake while also quantifying how 'balanced' their diet is. We aim to make it easier for people to identify patterns in their eating habits and adapt their diet with their personal health preferences. Diving into more detail, by inputting their meal in the app, the user would receive a detailed analysis of the macronutrients that he consumed, a visual representation of the balance of his diet as well as a comparison between his meal and six baseline diets (athlete, health nut, normal etc.). Our project strives to provide answers to some of the most common questions regarding nutrition like “How can I eat like an athlete?”, “Is my diet balanced?”, or even “How much fat did I eat today?”.
@@ -49,7 +49,7 @@ The user would first come across the meal selector widget. Displayed as a dropdo
 
 \
 
-![Figure 2: Select meal procedure](Screenshots/select meal.png)
+![Figure 2: Select meal procedure](Screenshots/select%20meal.png)
 
 \
 
@@ -57,7 +57,7 @@ Once the user has selected his meal, he can then press the 'Analyze your meal bu
 
 \
 
-![Figure 3: Analyze meal](Screenshots/analyze meal.png)
+![Figure 3: Analyze meal](Screenshots/analyze%20meal.png)
 
 \
 \
@@ -66,11 +66,11 @@ Finally, the last widget of the user interface will focus on helping the user re
 
 \
 
-![Figure 4: Baseline diet comparison](Screenshots/compare with basline.png)
+![Figure 4: Baseline diet comparison](Screenshots/compare%20with%20basline.png)
 
 The user will also have the ability to explore our data set by clicking the explore data set button on the top right. He would then be able to look around all the twelve tables of the data set and even use a search bar to find specific nutrients or food items that he desires.
 
-![Figure 5: Explore CanadianNutrients data set](Screenshots/explore data set.png)
+![Figure 5: Explore CanadianNutrients data set](Screenshots/explore%20data%20set.png)
 
 ### Data Wrangling
 
