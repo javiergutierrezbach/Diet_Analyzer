@@ -28,7 +28,7 @@ Branch at Health Canada.
 
 You can install the package by running:
 
-devtools::install_github("STAT231-S24/CanadianNutrient")
+devtools::install_github("javiergutierrezbach/Canadian-Nutrient-Dataset")
 
 Once the data package is installed in your local machine, you can find the 
 interactive shiny app in the Diet Analyzer folder. To run the app, just open the 
