@@ -18,7 +18,7 @@ directory of the repo using relative pathnames.
 - No scrap code or files left in the repo. No passwords or personal information.
 
 
-## Add information about your project here
+## Project Description
 
 
 The project uses the Canadian Nutrient data package in R. It was built using the 
